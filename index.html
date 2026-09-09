@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Amy</title>
+<meta name="description" content="Everything made for Amy's birthday, in one place.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400;1,500;1,600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #05050f;
+    --night-2: #0d0d20;
+    --surface: rgba(255,255,255,0.045);
+    --surface-border: rgba(255,255,255,0.08);
+    --star: #f6f6fa;
+    --platinum: #cfcfe0;
+    --muted: #8a8aa3;
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --violet: #7b3fe4;
+    --rose: #e43f6f;
+    --gradient-signature: linear-gradient(120deg, var(--gold) 0%, var(--rose) 45%, var(--violet) 100%);
+    --gradient-gold: linear-gradient(135deg, var(--gold-light), var(--gold));
+    --gradient-night: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(123,63,228,0.16), transparent 60%),
+                      radial-gradient(ellipse 60% 50% at 90% 10%, rgba(42,92,255,0.10), transparent 55%),
+                      radial-gradient(ellipse 70% 60% at 10% 90%, rgba(201,168,76,0.06), transparent 60%);
+    --font-display: 'Cormorant Garamond', Georgia, serif;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-ui: 'Space Grotesk', system-ui, sans-serif;
+    --ease-silk: cubic-bezier(0.19, 1, 0.22, 1);
+    --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--void);
+    color: var(--star);
+    font-family: var(--font-body);
+    line-height: 1.7;
+    min-height: 100vh;
+    overflow-x: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 24px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: var(--gradient-night);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  #starfield { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+  .star-dot { position: absolute; border-radius: 50%; background: var(--star); opacity: 0.2; animation: twinkle ease-in-out infinite; }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--min-op, 0.15); transform: scale(1); }
+    50% { opacity: var(--max-op, 0.85); transform: scale(1.3); }
+  }
+
+  .hub {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .hub-eyebrow {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-size: clamp(14px, 1.6vw, 17px);
+    color: var(--platinum);
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(14px);
+    filter: blur(6px);
+    animation: fadeUp 1.2s 0.2s var(--ease-silk) forwards;
+  }
+
+  .hub-title {
+    font-family: var(--font-display);
+    font-weight: 300;
+    font-size: clamp(40px, 7vw, 64px);
+    line-height: 1.05;
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(8px);
+    animation: fadeUp 1.3s 0.4s var(--ease-silk) forwards;
+  }
+
+  .hub-title em {
+    font-style: italic;
+    font-weight: 500;
+    background: var(--gradient-gold);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hub-subtitle {
+    font-size: clamp(14px, 1.5vw, 16px);
+    font-weight: 300;
+    color: var(--muted);
+    max-width: 420px;
+    margin: 0 auto 56px;
+    opacity: 0;
+    transform: translateY(16px);
+    filter: blur(6px);
+    animation: fadeUp 1.2s 0.65s var(--ease-silk) forwards;
+  }
+
+  @keyframes fadeUp {
+    to { opacity: 1; transform: translateY(0); filter: blur(0); }
+  }
+
+  .hub-links {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .hub-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    text-align: left;
+    text-decoration: none;
+    color: var(--star);
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    border-radius: 16px;
+    padding: 24px 28px;
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(6px);
+    animation: fadeUp 1s var(--ease-silk) forwards;
+    transition: border-color 0.4s, transform 0.4s var(--ease-silk), box-shadow 0.4s;
+  }
+
+  .hub-link:nth-child(1) { animation-delay: 0.9s; }
+  .hub-link:nth-child(2) { animation-delay: 1.05s; }
+  .hub-link:nth-child(3) { animation-delay: 1.2s; }
+
+  .hub-link:hover {
+    border-color: rgba(201,168,76,0.3);
+    transform: translateY(-4px);
+    box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  }
+
+  .hub-link-num {
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    color: var(--muted);
+    flex-shrink: 0;
+  }
+
+  .hub-link-text { flex: 1; }
+
+  .hub-link-title {
+    font-family: var(--font-display);
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(18px, 2vw, 21px);
+    margin-bottom: 4px;
+  }
+
+  .hub-link-desc {
+    font-size: 12px;
+    font-weight: 300;
+    color: var(--muted);
+  }
+
+  .hub-link-arrow {
+    font-family: var(--font-ui);
+    font-size: 16px;
+    color: var(--gold);
+    transition: transform 0.35s var(--spring);
+    flex-shrink: 0;
+  }
+
+  .hub-link:hover .hub-link-arrow { transform: translateX(5px); }
+
+  .hub-footer {
+    margin-top: 56px;
+    font-family: var(--font-ui);
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    opacity: 0;
+    animation: fadeUp 1s 1.5s var(--ease-silk) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+    .hub-eyebrow, .hub-title, .hub-subtitle, .hub-link, .hub-footer {
+      opacity: 1 !important; transform: none !important; filter: none !important;
+    }
+  }
+</style>
+</head>
+<body>
+
+  <div id="starfield" aria-hidden="true"></div>
+
+  <main class="hub">
+    <p class="hub-eyebrow">Everything, in one place</p>
+    <h1 class="hub-title">Happy birthday, <em>Amy</em></h1>
+    <p class="hub-subtitle">A few things were made for you this year. Pick where you'd like to start.</p>
+
+    <div class="hub-links">
+      <a class="hub-link" href="https://articembers.github.io/AmyBirthdayMain/">
+        <span class="hub-link-num">01</span>
+        <span class="hub-link-text">
+          <span class="hub-link-title">The main event</span>
+          <span class="hub-link-desc">Happy Birthday, Amy 💜</span>
+        </span>
+        <span class="hub-link-arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="hub-link" href="https://articembers.github.io/AmyBirthdaySecondary/">
+        <span class="hub-link-num">02</span>
+        <span class="hub-link-text">
+          <span class="hub-link-title">A little extra</span>
+          <span class="hub-link-desc">Happy Birthday, Amy 💜</span>
+        </span>
+        <span class="hub-link-arrow" aria-hidden="true">→</span>
+      </a>
+
+      <a class="hub-link" href="https://articembers.github.io/amybirthdaytertiary/index.html">
+        <span class="hub-link-num">03</span>
+        <span class="hub-link-text">
+          <span class="hub-link-title">One more thing</span>
+          <span class="hub-link-desc">Happy Birthday, Amy</span>
+        </span>
+        <span class="hub-link-arrow" aria-hidden="true">→</span>
+      </a>
+    </div>
+
+    <p class="hub-footer">Made with love, for one of the good ones.</p>
+  </main>
+
+  <script>
+    (function () {
+      var field = document.getElementById("starfield");
+      var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      var count = window.innerWidth < 640 ? 60 : 110;
+      var frag = document.createDocumentFragment();
+
+      for (var i = 0; i < count; i++) {
+        var star = document.createElement("span");
+        star.className = "star-dot";
+        var size = (Math.random() * 1.8 + 0.6).toFixed(2);
+        star.style.width = size + "px";
+        star.style.height = size + "px";
+        star.style.top = (Math.random() * 100).toFixed(2) + "%";
+        star.style.left = (Math.random() * 100).toFixed(2) + "%";
+        star.style.setProperty("--min-op", (Math.random() * 0.2 + 0.08).toFixed(2));
+        star.style.setProperty("--max-op", (Math.random() * 0.5 + 0.5).toFixed(2));
+        star.style.animationDuration = (Math.random() * 3.5 + 2.5).toFixed(2) + "s";
+        star.style.animationDelay = (Math.random() * 5).toFixed(2) + "s";
+        frag.appendChild(star);
+      }
+      field.appendChild(frag);
+
+      if (!reduceMotion && window.matchMedia("(pointer: fine)").matches) {
+        window.addEventListener("mousemove", function (e) {
+          var x = (e.clientX / window.innerWidth - 0.5) * 10;
+          var y = (e.clientY / window.innerHeight - 0.5) * 10;
+          field.style.transform = "translate(" + x + "px, " + y + "px)";
+        });
+      }
+    })();
+  </script>
+
+</body>
+</html>
