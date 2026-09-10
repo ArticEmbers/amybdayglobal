@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBDAYA3</title>
+<meta name="description" content="A little corner of the internet for Amy's birthday.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400;1,500;1,600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Warp transition overlay -->
+  <div id="warp-overlay" aria-hidden="true">
+    <div class="warp-field" id="warp-field"></div>
+  </div>
+
+  <!-- Ambient starfield -->
+  <div id="starfield" aria-hidden="true"></div>
+
+  <nav id="nav">
+  <a href="index.html" class="nav-logo">Amy <span>✦</span></a>
+
+  <div class="nav-actions">
+    <a
+      href="https://articembers.github.io/amybdayglobal/"
+      class="nav-hub"
+    >
+      Hub
+    </a>
+
+    <a href="message.html" class="nav-message" data-transition>
+      Message
+    </a>
+  </div>
+ </nav>
+
+  <!-- ============ HAPPY BIRTHDAY AREA ============ -->
+  <header class="hero">
+
+    <div class="shooting-stars" aria-hidden="true">
+      <span class="shoot s1"></span>
+      <span class="shoot s2"></span>
+      <span class="shoot s3"></span>
+    </div>
+
+    <div class="hero-moon-wrap" id="moon-parallax">
+      <svg class="hero-moon" viewBox="0 0 200 200" aria-hidden="true">
+        <defs>
+          <radialGradient id="moonGlow" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#fbf6e3"/>
+            <stop offset="55%" stop-color="#f3ecd2"/>
+            <stop offset="100%" stop-color="#cbb877"/>
+          </radialGradient>
+          <filter id="moonBlur" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="1.2"/>
+          </filter>
+        </defs>
+        <circle cx="100" cy="100" r="82" fill="url(#moonGlow)"/>
+        <circle cx="70" cy="70" r="14" fill="#d9c98f" opacity="0.5" filter="url(#moonBlur)"/>
+        <circle cx="120" cy="95" r="9" fill="#d9c98f" opacity="0.4" filter="url(#moonBlur)"/>
+        <circle cx="95" cy="135" r="18" fill="#d9c98f" opacity="0.35" filter="url(#moonBlur)"/>
+        <circle cx="135" cy="60" r="6" fill="#d9c98f" opacity="0.4" filter="url(#moonBlur)"/>
+      </svg>
+    </div>
+
+    <div class="hero-content">
+      <p class="hero-eyebrow">Somewhere, the sky cleared up just for this</p>
+      <h1 class="hero-title">
+        <span class="line">Happy birthday,</span>
+        <span class="line name">Amy</span>
+      </h1>
+      <p class="hero-subtitle">One more trip around the sun, done. Tonight's the part where we make a fuss about it.</p>
+
+      <!-- ============ WISH AREA ============ -->
+      <p class="wish-instruction">Close your eyes and make your wish first — then press the button.</p>
+      <div class="wish-stage" id="wish-stage">
+
+        <div class="wish-step active">
+          <button id="wish-btn" class="wish-btn" type="button">I've made my wish ✦</button>
+        </div>
+
+        <div class="wish-step">
+          <p class="wish-check">Did you actually make it, though?</p>
+          <div class="wish-confirm-row">
+            <button class="wish-confirm-btn yes" type="button">Yes, truly</button>
+            <button class="wish-confirm-btn no" type="button">Give me a second</button>
+          </div>
+        </div>
+
+        <div class="wish-step">
+          <p id="wish-response" class="wish-response" aria-live="polite"></p>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="hero-scroll-cue" aria-hidden="true"><span></span></div>
+  </header>
+
+  <!-- ============ WISHES FROM THE NIGHT SKY ============ -->
+  <section class="wishes">
+    <p class="wishes-lead reveal">Three small wishes, just for tonight</p>
+    <ul class="wishes-list">
+      <li>
+        <span class="wish-mark">✦</span>
+        <p>May this year hand you a few things you didn't know you wanted.</p>
+      </li>
+      <li>
+        <span class="wish-mark">✦</span>
+        <p>May the people who show up for you keep showing up — exactly like they already do.</p>
+      </li>
+      <li>
+        <span class="wish-mark">✦</span>
+        <p>May you keep laughing the way you do, the kind that gets everyone else started too.</p>
+      </li>
+    </ul>
+  </section>
+
+  <!-- ============ TEXT AREA: FROM ME ============ -->
+  <section class="from-me">
+    <p class="from-me-lead reveal">A little something from me</p>
+    <p class="reveal delay-1">I don't say this enough, so I'm saying it here instead, where you can't interrupt me: I'm genuinely glad we ended up in each other's lives.</p>
+    <p class="reveal delay-2">Whatever this year throws at you, good or ridiculous, I've got you. You've more than earned an easy one.</p>
+    <p class="from-me-sign reveal delay-3">Happy birthday, Amy.</p>
+  </section>
+
+  <!-- ============ SMALL STUFF ============ -->
+  <section class="little-things">
+    <p class="little-things-lead reveal">A few small things, for no particular reason</p>
+    <div class="note-grid">
+      <div class="note-card">
+        <p>Your Spotify Wrapped is going to be unhinged again this year, isn't it.</p>
+      </div>
+      <div class="note-card">
+        <p>That one photo from our last trip together still lives in my camera roll.</p>
+      </div>
+      <div class="note-card">
+        <p>I still think about that thing you said that one time — you know the one.</p>
+      </div>
+      <div class="note-card">
+        <p>This is your official reminder that you still owe me a rematch.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ THE MESSAGE ============ -->
+  <section class="message-cta">
+    <p class="message-cta-eyebrow reveal-scale">There's a bit more</p>
+    <p class="reveal-scale delay-1">One more thing, written down properly, waiting for you on the other side.</p>
+    <a href="message.html" class="message-cta-btn reveal-scale delay-2" data-transition>
+      <span>Open the message</span>
+      <span aria-hidden="true">→</span>
+    </a>
+  </section>
+
+  <footer id="footer">
+    <p class="footer-line">Made with love, for one of the good ones.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

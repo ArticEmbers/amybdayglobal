@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For Amy</title>
+<meta name="description" content="A birthday letter for Amy.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400;1,500;1,600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Warp transition overlay -->
+  <div id="warp-overlay" aria-hidden="true">
+    <div class="warp-field" id="warp-field"></div>
+  </div>
+
+  <!-- Ambient starfield -->
+  <div id="starfield" aria-hidden="true"></div>
+
+  <nav id="nav">
+    <a href="index.html" class="nav-logo" data-transition>Amy <span>✦</span></a>
+    <a href="index.html" class="nav-back" data-transition>← Back</a>
+  </nav>
+
+  <main class="letter-wrap">
+    <div class="letter-card">
+
+      <svg class="letter-seal" viewBox="0 0 100 100" aria-hidden="true">
+        <defs>
+          <radialGradient id="sealGrad" cx="35%" cy="30%" r="75%">
+            <stop offset="0%" stop-color="#e8c97a"/>
+            <stop offset="100%" stop-color="#a9863a"/>
+          </radialGradient>
+        </defs>
+        <circle cx="50" cy="50" r="46" fill="url(#sealGrad)"/>
+        <circle cx="50" cy="50" r="46" fill="none" stroke="#05050f" stroke-opacity="0.15" stroke-width="1.5"/>
+        <path d="M50 26 L56 42 L73 44 L60 55 L64 72 L50 62 L36 72 L40 55 L27 44 L44 42 Z"
+              fill="#05050f" fill-opacity="0.55"/>
+      </svg>
+
+      <p class="letter-date">For Amy, on her birthday</p>
+      <h1 class="letter-heading">Dear Amy,</h1>
+
+      <div class="letter-body">
+        <p class="reveal-line">Another year has quietly turned over, and it still feels like there should be more ceremony to that than a candle and a wish. So here's a little more ceremony.</p>
+        <p class="reveal-line">You have a way of making ordinary days feel less ordinary — the kind of person people call first with good news, and the kind who actually picks up when it's bad. That's rarer than it sounds, and it doesn't go unnoticed.</p>
+        <p class="reveal-line">Whatever this year brings, we hope it hands you back a little of what you give everyone else without even trying. Today, though, isn't about anyone else. Let it be a little indulgent.</p>
+        <p class="reveal-line">Happy birthday, Amy. We're genuinely glad you were born.</p>
+      </div>
+
+      <p class="letter-signoff">With love,</p>
+      <p class="letter-signature">The people lucky enough to know you</p>
+    </div>
+  </main>
+
+  <footer id="footer-mini">
+    <a href="index.html" data-transition>← Back to the beginning</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,4340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBDAYA2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@300;400;500;700&family=Bodoni+Moda:ital,opsz,wght@0,6..96,300;0,6..96,500;1,6..96,400&display=swap" rel="stylesheet">
+
+<style>
+/* ============================================================
+   DESIGN TOKENS & CUSTOM PROPERTIES
+   ============================================================ */
+:root {
+  --black: #050505;
+  --charcoal: #0d0d0f;
+  --dark: #111116;
+  --surface: #16161d;
+  --surface-2: #1c1c26;
+  --surface-3: #202030;
+  --white: #f5f5f7;
+  --platinum: #d0d0d8;
+  --muted: #7a7a8c;
+  --muted-dim: #55556a;
+  --gold: #c9a84c;
+  --gold-light: #e8c97a;
+  --sapphire: #2a5cff;
+  --sapphire-glow: rgba(42,92,255,0.35);
+  --violet: #7b3fe4;
+  --violet-glow: rgba(123,63,228,0.3);
+  --rose: #e43f6f;
+
+  --gd-color: #c9a84c;
+  --gd-glow: rgba(201,168,76,0.4);
+  --ty-color: #e8c97a;
+  --ty-glow: rgba(232,201,122,0.35);
+  --ds-color: #2a5cff;
+  --ds-glow: rgba(42,92,255,0.4);
+  --top-color: #7b3fe4;
+  --top-glow: rgba(123,63,228,0.4);
+
+  --gradient-signature: linear-gradient(120deg, var(--gold) 0%, var(--rose) 45%, var(--violet) 100%);
+  --gradient-gold: linear-gradient(135deg, var(--gold-light), var(--gold));
+  --gradient-mesh: radial-gradient(circle at 15% 20%, rgba(201,168,76,0.08), transparent 40%),
+                   radial-gradient(circle at 85% 15%, rgba(123,63,228,0.08), transparent 40%),
+                   radial-gradient(circle at 50% 90%, rgba(42,92,255,0.06), transparent 45%);
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-editorial: 'Bodoni Moda', 'Cormorant Garamond', serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-ui: 'Space Grotesk', system-ui, sans-serif;
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+  --spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --spring-hard: cubic-bezier(0.68, -0.6, 0.32, 1.6);
+
+  --nav-h: 72px;
+  --section-pad: clamp(80px, 12vw, 160px);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  --shadow-soft: 0 20px 60px rgba(0,0,0,0.35);
+  --shadow-gold: 0 20px 60px rgba(201,168,76,0.12);
+}
+
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  scroll-snap-type: y proximity;
+  overflow-x: hidden;
+}
+
+body {
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.1vw, 16px);
+  line-height: 1.7;
+  overflow-x: hidden;
+  cursor: none;
+  position: relative;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: var(--gradient-mesh);
+  pointer-events: none;
+  z-index: 1;
+  mix-blend-mode: screen;
+}
+
+::selection { background: rgba(201,168,76,0.35); color: var(--white); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(var(--gold), var(--violet));
+  border-radius: 4px;
+}
+
+/* Visible keyboard focus */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 1px solid var(--gold);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
+/* ============================================================
+   HEART INTRO — "I LOVE YOU" HEART ANIMATION (plays before preloader)
+   ============================================================ */
+#heart-intro {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  transition: opacity 1.1s var(--ease-out), visibility 1.1s;
+}
+
+#heart-intro.done { opacity: 0; visibility: hidden; pointer-events: none; }
+
+#heart-intro::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 50%, rgba(228,63,111,0.06) 0%, transparent 70%);
+}
+
+.heart-intro-stage {
+  position: relative;
+  width: min(72vw, 460px);
+  height: min(72vw, 460px);
+  z-index: 1;
+}
+
+.heart-word {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-ui);
+  font-weight: 500;
+  color: var(--rose);
+  text-shadow: 0 0 6px rgba(228,63,111,0.9), 0 0 14px rgba(228,63,111,0.6), 0 0 26px rgba(228,63,111,0.35);
+  white-space: nowrap;
+  opacity: 0;
+  animation-name: heartWordFlicker;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  pointer-events: none;
+}
+
+@keyframes heartWordFlicker {
+  0%   { opacity: 0; }
+  8%   { opacity: 1; }
+  20%  { opacity: 0.35; }
+  32%  { opacity: 1; }
+  46%  { opacity: 0.15; }
+  60%  { opacity: 0.9; }
+  78%  { opacity: 0.2; }
+  100% { opacity: 0; }
+}
+
+.heart-center-text {
+  position: absolute;
+  top: 47%; left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(26px, 5.6vw, 44px);
+  color: var(--white);
+  text-align: center;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  animation: heartCenterFade 3.4s ease-in-out infinite;
+  text-shadow: 0 0 20px rgba(255,255,255,0.25);
+}
+
+@keyframes heartCenterFade {
+  0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.94); }
+  15%  { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  50%  { opacity: 1; }
+  72%  { opacity: 0; transform: translate(-50%, -50%) scale(1.02); }
+  100% { opacity: 0; }
+}
+
+.heart-intro-label {
+  position: absolute;
+  bottom: clamp(28px, 6vh, 56px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--muted);
+  opacity: 0;
+  animation: fadeUp 1s 0.6s var(--ease-out) forwards;
+}
+
+/* ============================================================
+   PRELOADER
+   ============================================================ */
+#preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: var(--black);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 24px;
+  transition: opacity 0.9s var(--ease-out), visibility 0.9s;
+}
+
+#preloader.done { opacity: 0; visibility: hidden; pointer-events: none; }
+
+.preloader-mark {
+  font-family: var(--font-editorial);
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 300;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--white);
+  opacity: 0.9;
+}
+
+.preloader-mark span { color: var(--gold); }
+
+.preloader-bar {
+  width: min(240px, 60vw);
+  height: 1px;
+  background: rgba(255,255,255,0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.preloader-bar-fill {
+  position: absolute;
+  inset: 0 100% 0 0;
+  background: var(--gradient-signature);
+  animation: preloaderFill 1.6s var(--ease-out) forwards;
+}
+
+@keyframes preloaderFill {
+  to { inset: 0 0 0 0; }
+}
+
+.preloader-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ============================================================
+   CURSOR
+   ============================================================ */
+#cursor {
+  position: fixed;
+  width: 12px; height: 12px;
+  background: var(--gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: width 0.25s var(--ease-out), height 0.25s var(--ease-out),
+              background 0.25s, opacity 0.3s;
+  mix-blend-mode: difference;
+}
+
+#cursor-ring {
+  position: fixed;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(201,168,76,0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s var(--ease-out), height 0.4s var(--ease-out),
+              border-color 0.3s, opacity 0.3s;
+}
+
+#cursor-trail {
+  position: fixed;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--rose);
+  pointer-events: none;
+  z-index: 9997;
+  transform: translate(-50%, -50%);
+  opacity: 0.5;
+  filter: blur(1px);
+}
+
+body:hover #cursor { opacity: 1; }
+
+/* ============================================================
+   NOISE OVERLAY
+   ============================================================ */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9000;
+  opacity: 0.4;
+}
+
+/* ============================================================
+   SCROLL PROGRESS RING (back-to-top)
+   ============================================================ */
+#progress-ring-wrap {
+  position: fixed;
+  right: clamp(16px, 3vw, 32px);
+  bottom: clamp(16px, 3vw, 32px);
+  width: 56px; height: 56px;
+  z-index: 500;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.4s var(--ease-out), transform 0.4s var(--ease-out);
+  pointer-events: none;
+}
+
+#progress-ring-wrap.visible { opacity: 1; transform: scale(1); pointer-events: all; }
+
+#progress-ring-wrap button {
+  position: relative;
+  width: 100%; height: 100%;
+  background: rgba(10,10,12,0.7);
+  backdrop-filter: blur(10px);
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold);
+  font-size: 16px;
+}
+
+#progress-ring-wrap svg { position: absolute; inset: 0; transform: rotate(-90deg); }
+#progress-ring-wrap circle {
+  fill: none;
+  stroke-width: 2;
+}
+#progress-ring-wrap .ring-bg { stroke: rgba(255,255,255,0.08); }
+#progress-ring-wrap .ring-fg {
+  stroke: var(--gold);
+  stroke-linecap: round;
+  transition: stroke-dashoffset 0.1s linear;
+}
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+#nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(24px, 5vw, 64px);
+  z-index: 1000;
+  transition: background 0.5s, backdrop-filter 0.5s, transform 0.5s var(--ease-out);
+}
+
+#nav.scrolled {
+  background: rgba(5,5,5,0.75);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(201,168,76,0.08);
+}
+
+#nav.hide { transform: translateY(-100%); }
+
+.nav-logo {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 300;
+  letter-spacing: 0.25em;
+  color: var(--white);
+  text-decoration: none;
+  text-transform: uppercase;
+  position: relative;
+  display: inline-block;
+  transition: transform 0.35s var(--spring);
+}
+
+.nav-logo span { color: var(--gold); }
+
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.4vw, 32px);
+}
+
+.nav-hub-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--platinum);
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 9px 20px;
+  border-radius: 100px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.35s, color 0.35s, transform 0.35s var(--ease-out);
+}
+
+.nav-hub-link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-signature);
+  opacity: 0;
+  transition: opacity 0.4s;
+  z-index: -1;
+}
+
+.nav-hub-link:hover {
+  border-color: transparent;
+  color: var(--white);
+  transform: translateY(-1px);
+}
+.nav-hub-link:hover::before { opacity: 1; }
+
+.nav-links {
+  display: flex;
+  gap: clamp(24px, 3vw, 48px);
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--platinum);
+  text-decoration: none;
+  position: relative;
+  transition: color 0.3s;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -3px; left: 0;
+  width: 0; height: 1px;
+  background: var(--gradient-signature);
+  transition: width 0.4s var(--ease-out);
+}
+
+.nav-links a:hover,
+.nav-links a.active { color: var(--gold); }
+.nav-links a:hover::after,
+.nav-links a.active::after { width: 100%; }
+
+.nav-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 1px;
+  background: var(--gradient-signature);
+  width: 0%;
+  transition: width 0.1s linear;
+  box-shadow: 0 0 8px rgba(201,168,76,0.6);
+}
+
+/* Hamburger */
+.nav-hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  cursor: pointer;
+  padding: 8px;
+}
+.nav-hamburger span {
+  display: block;
+  width: 24px; height: 1px;
+  background: var(--white);
+  transition: all 0.3s var(--ease-out);
+}
+
+@media (max-width: 768px) {
+  .nav-links { display: none; }
+  .nav-hamburger { display: flex; }
+}
+
+/* ============================================================
+   TICKER STRIP (ambient marquee)
+   ============================================================ */
+.ticker-strip {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: var(--charcoal);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  padding: 14px 0;
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  gap: 48px;
+  animation: tickerScroll 32s linear infinite;
+}
+
+.ticker-track span {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.ticker-track span::before {
+  content: '◆';
+  font-size: 6px;
+  color: var(--gold);
+}
+
+@keyframes tickerScroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+#hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  scroll-snap-align: start;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%,
+    rgba(42,92,255,0.12) 0%,
+    rgba(123,63,228,0.08) 30%,
+    transparent 70%),
+    radial-gradient(ellipse 40% 40% at 80% 70%,
+    rgba(201,168,76,0.06) 0%, transparent 60%);
+  animation: heroBgPulse 8s ease-in-out infinite alternate;
+}
+
+@keyframes heroBgPulse {
+  0% { opacity: 0.6; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-ui);
+  font-size: clamp(10px, 1.2vw, 13px);
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s 0.3s var(--ease-out) forwards;
+}
+
+.hero-title {
+  font-family: var(--font-display);
+  font-size: clamp(72px, 14vw, 200px);
+  font-weight: 300;
+  line-height: 0.88;
+  letter-spacing: -0.02em;
+  color: var(--white);
+  margin-bottom: 32px;
+}
+
+.hero-title .letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(60%) rotate(4deg);
+  animation: letterUp 0.9s var(--ease-out) forwards;
+}
+
+@keyframes letterUp {
+  to { opacity: 1; transform: translateY(0) rotate(0deg); }
+}
+
+.hero-title .outline {
+  -webkit-text-stroke: 1px rgba(255,255,255,0.3);
+  color: transparent;
+}
+
+.hero-title .gold { color: var(--gold); }
+
+.hero-subtitle {
+  font-family: var(--font-body);
+  font-size: clamp(14px, 1.8vw, 20px);
+  font-weight: 300;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  max-width: 540px;
+  margin: 0 auto 48px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 1s 1.1s var(--ease-out) forwards;
+}
+
+.hero-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white);
+  text-decoration: none;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 16px 36px;
+  border-radius: 100px;
+  position: relative;
+  overflow: hidden;
+  opacity: 0;
+  animation: fadeUp 1s 1.4s var(--ease-out) forwards;
+  transition: border-color 0.3s, color 0.3s;
+  will-change: transform;
+}
+
+.hero-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-signature);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.hero-cta:hover { border-color: transparent; }
+.hero-cta:hover::before { opacity: 1; }
+.hero-cta span { position: relative; z-index: 1; }
+.hero-cta .arrow { display: inline-block; transition: transform 0.4s var(--spring); }
+.hero-cta:hover .arrow { transform: translateY(4px); }
+
+.hero-scroll {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp 1s 1.8s var(--ease-out) forwards;
+}
+
+.hero-scroll-line {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--gold), transparent);
+  animation: scrollLine 2s ease-in-out infinite;
+}
+
+@keyframes scrollLine {
+  0%, 100% { opacity: 1; transform: scaleY(1); }
+  50% { opacity: 0.4; transform: scaleY(0.6); }
+}
+
+.hero-scroll-text {
+  font-family: var(--font-ui);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+  writing-mode: vertical-rl;
+}
+
+/* Floating geometric shapes */
+.hero-shape {
+  position: absolute;
+  pointer-events: none;
+  animation: floatShape 6s ease-in-out infinite;
+}
+
+.hero-shape-1 {
+  width: 300px; height: 300px;
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: 50%;
+  top: 15%; left: 8%;
+  animation-duration: 8s;
+}
+
+.hero-shape-2 {
+  width: 150px; height: 150px;
+  border: 1px solid rgba(42,92,255,0.12);
+  border-radius: 50%;
+  bottom: 20%; right: 10%;
+  animation-duration: 6s;
+  animation-delay: -2s;
+}
+
+.hero-shape-3 {
+  width: 60px; height: 60px;
+  background: radial-gradient(circle, rgba(201,168,76,0.2), transparent);
+  border-radius: 50%;
+  top: 30%; right: 20%;
+  animation-delay: -4s;
+}
+
+.hero-shape-4 {
+  width: 90px; height: 90px;
+  border: 1px solid rgba(123,63,228,0.14);
+  transform: rotate(45deg);
+  top: 60%; left: 20%;
+  animation-duration: 10s;
+  animation-delay: -1s;
+}
+
+@keyframes floatShape {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-20px) rotate(10deg); }
+}
+
+/* Lens flare */
+.lens-flare {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: var(--gold);
+  border-radius: 50%;
+  box-shadow: 0 0 60px 40px rgba(201,168,76,0.08),
+              0 0 120px 80px rgba(201,168,76,0.04);
+  top: 20%; right: 25%;
+  pointer-events: none;
+  animation: flarePulse 4s ease-in-out infinite;
+}
+
+@keyframes flarePulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.5); }
+}
+
+/* ============================================================
+   SHARED SECTION STYLES
+   ============================================================ */
+.section {
+  position: relative;
+  padding: var(--section-pad) clamp(24px, 6vw, 100px);
+  scroll-snap-align: start;
+  overflow: hidden;
+}
+
+.section-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.section-label::before {
+  content: '';
+  display: block;
+  width: 32px; height: 1px;
+  background: var(--gold);
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 7vw, 96px);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin-bottom: clamp(24px, 4vw, 48px);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  filter: blur(4px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out), filter 0.9s var(--ease-out);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); filter: blur(0); }
+
+.reveal-left {
+  opacity: 0;
+  transform: translateX(-40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal-left.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-right {
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity 0.9s var(--ease-out), transform 0.9s var(--ease-out);
+}
+.reveal-right.visible { opacity: 1; transform: translateX(0); }
+
+.reveal-scale {
+  opacity: 0;
+  transform: scale(0.92);
+  transition: opacity 0.8s var(--ease-out), transform 0.8s var(--spring);
+}
+.reveal-scale.visible { opacity: 1; transform: scale(1); }
+
+.delay-1 { transition-delay: 0.1s; }
+.delay-2 { transition-delay: 0.2s; }
+.delay-3 { transition-delay: 0.3s; }
+.delay-4 { transition-delay: 0.4s; }
+.delay-5 { transition-delay: 0.5s; }
+.delay-6 { transition-delay: 0.6s; }
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ============================================================
+   INTRODUCTION
+   ============================================================ */
+#intro {
+  background: var(--charcoal);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.intro-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(48px, 8vw, 120px);
+  align-items: center;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.intro-left .section-title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+.intro-left p {
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.85;
+  margin-bottom: 24px;
+}
+
+.intro-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.intro-stat {
+  text-align: center;
+  padding: 24px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  transition: transform 0.4s var(--ease-out), border-color 0.3s, box-shadow 0.4s;
+}
+
+.intro-stat:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201,168,76,0.2);
+  box-shadow: var(--shadow-gold);
+}
+
+.stat-num {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4vw, 52px);
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.stat-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.intro-right {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.member-preview {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 32px 24px;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 0.3s, transform 0.4s var(--ease-out), box-shadow 0.4s;
+}
+
+.member-preview::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 100%, var(--member-glow, rgba(201,168,76,0.15)), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.member-preview:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.12); box-shadow: var(--shadow-soft); }
+.member-preview:hover::before { opacity: 1; }
+
+.member-preview.gd { --member-glow: rgba(201,168,76,0.2); }
+.member-preview.ty { --member-glow: rgba(232,201,122,0.2); }
+.member-preview.ds { --member-glow: rgba(42,92,255,0.2); }
+.member-preview.top { --member-glow: rgba(123,63,228,0.2); }
+
+.member-preview-icon {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 300;
+  transition: transform 0.4s var(--spring);
+}
+
+.member-preview:hover .member-preview-icon { transform: rotate(-8deg) scale(1.08); }
+
+.member-preview.gd .member-preview-icon { background: linear-gradient(135deg, rgba(201,168,76,0.3), rgba(201,168,76,0.1)); color: var(--gold); }
+.member-preview.ty .member-preview-icon { background: linear-gradient(135deg, rgba(232,201,122,0.3), rgba(232,201,122,0.1)); color: var(--ty-color); }
+.member-preview.ds .member-preview-icon { background: linear-gradient(135deg, rgba(42,92,255,0.3), rgba(42,92,255,0.1)); color: var(--sapphire); }
+.member-preview.top .member-preview-icon { background: linear-gradient(135deg, rgba(123,63,228,0.3), rgba(123,63,228,0.1)); color: var(--violet); }
+
+.member-preview-name {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.member-preview-role {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.member-preview-num {
+  position: absolute;
+  top: 16px; right: 20px;
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.04);
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .intro-grid { grid-template-columns: 1fr; }
+  .intro-right { grid-template-columns: repeat(2, 1fr); }
+  .intro-stats { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   DIVIDER
+   ============================================================ */
+.divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.3), transparent);
+  margin: 0;
+  position: relative;
+}
+
+.divider-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 8px; height: 8px;
+  background: var(--black);
+  border: 1px solid rgba(201,168,76,0.4);
+  border-radius: 50%;
+}
+
+/* ============================================================
+   MEMBER SECTIONS
+   ============================================================ */
+
+/* G-DRAGON */
+#gdragon {
+  background: var(--black);
+  min-height: 100vh;
+  position: relative;
+}
+
+#gdragon::before {
+  content: '';
+  position: absolute;
+  top: -100px; left: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(201,168,76,0.08), transparent 70%);
+  pointer-events: none;
+}
+
+.member-section-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.member-hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: clamp(40px, 6vw, 80px);
+  align-items: start;
+  margin-bottom: clamp(60px, 8vw, 100px);
+}
+
+.member-hero-grid.reverse { direction: rtl; }
+.member-hero-grid.reverse > * { direction: ltr; }
+
+.member-visual {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--surface);
+  transition: transform 0.6s var(--ease-out);
+}
+
+.member-visual-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 16px;
+  position: relative;
+}
+
+.member-visual-bg {
+  position: absolute;
+  inset: 0;
+  transition: transform 8s var(--ease-out);
+}
+
+.member-visual:hover .member-visual-bg { transform: scale(1.08); }
+
+.gd-bg { background: linear-gradient(145deg, #1a1408 0%, #0d0d0f 40%, #0a0808 100%);
+  background-image: radial-gradient(ellipse at 30% 40%, rgba(201,168,76,0.2) 0%, transparent 60%),
+  radial-gradient(ellipse at 70% 80%, rgba(201,168,76,0.08) 0%, transparent 50%); }
+
+.ty-bg { background: linear-gradient(145deg, #14120a 0%, #0d0d0f 40%, #0a0a08 100%);
+  background-image: radial-gradient(ellipse at 60% 30%, rgba(232,201,122,0.18) 0%, transparent 60%),
+  radial-gradient(ellipse at 20% 70%, rgba(201,168,76,0.1) 0%, transparent 50%); }
+
+.ds-bg { background: linear-gradient(145deg, #080d1a 0%, #0d0d0f 40%, #080810 100%);
+  background-image: radial-gradient(ellipse at 40% 30%, rgba(42,92,255,0.2) 0%, transparent 60%),
+  radial-gradient(ellipse at 70% 70%, rgba(42,92,255,0.1) 0%, transparent 50%); }
+
+.top-bg { background: linear-gradient(145deg, #100814 0%, #0d0d0f 40%, #0c080e 100%);
+  background-image: radial-gradient(ellipse at 50% 30%, rgba(123,63,228,0.2) 0%, transparent 60%),
+  radial-gradient(ellipse at 30% 70%, rgba(123,63,228,0.1) 0%, transparent 50%); }
+
+.member-visual-name {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(60px, 10vw, 120px);
+  font-weight: 300;
+  line-height: 1;
+  -webkit-text-stroke: 1px;
+  color: transparent;
+  text-align: center;
+}
+
+.gd-name { -webkit-text-stroke-color: rgba(201,168,76,0.25); }
+.ty-name { -webkit-text-stroke-color: rgba(232,201,122,0.25); }
+.ds-name { -webkit-text-stroke-color: rgba(42,92,255,0.25); }
+.top-name { -webkit-text-stroke-color: rgba(123,63,228,0.25); }
+
+.member-visual-label {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.member-visual-border {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.gd-border { box-shadow: inset 0 0 0 1px rgba(201,168,76,0.2), 0 0 60px rgba(201,168,76,0.05); }
+.ty-border { box-shadow: inset 0 0 0 1px rgba(232,201,122,0.2), 0 0 60px rgba(232,201,122,0.05); }
+.ds-border { box-shadow: inset 0 0 0 1px rgba(42,92,255,0.2), 0 0 60px rgba(42,92,255,0.05); }
+.top-border { box-shadow: inset 0 0 0 1px rgba(123,63,228,0.2), 0 0 60px rgba(123,63,228,0.05); }
+
+.member-info {}
+
+.member-section-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.member-section-label::before {
+  content: '';
+  display: block;
+  width: 24px; height: 1px;
+}
+
+.gd-label { color: var(--gd-color); }
+.gd-label::before { background: var(--gd-color); }
+.ty-label { color: var(--ty-color); }
+.ty-label::before { background: var(--ty-color); }
+.ds-label { color: var(--ds-color); }
+.ds-label::before { background: var(--ds-color); }
+.top-label { color: var(--top-color); }
+.top-label::before { background: var(--top-color); }
+
+.member-title {
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 88px);
+  font-weight: 300;
+  line-height: 1.0;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.member-real-name {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 32px;
+}
+
+.member-bio {
+  font-size: clamp(14px, 1.3vw, 16px);
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.85;
+  margin-bottom: 32px;
+}
+
+.member-quote {
+  border-left: 2px solid;
+  padding-left: 24px;
+  margin: 32px 0;
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2vw, 24px);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.5;
+  position: relative;
+}
+
+.gd .member-quote { border-color: var(--gd-color); }
+.ty .member-quote { border-color: var(--ty-color); }
+.ds .member-quote { border-color: var(--ds-color); }
+.top-s .member-quote { border-color: var(--top-color); }
+
+.member-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.tag {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 100px;
+  border: 1px solid;
+  transition: transform 0.3s var(--spring), background 0.3s;
+}
+
+.tag:hover { transform: translateY(-2px); }
+
+.gd .tag { color: var(--gd-color); border-color: rgba(201,168,76,0.3); background: rgba(201,168,76,0.06); }
+.ty .tag { color: var(--ty-color); border-color: rgba(232,201,122,0.3); background: rgba(232,201,122,0.06); }
+.ds .tag { color: var(--ds-color); border-color: rgba(42,92,255,0.3); background: rgba(42,92,255,0.06); }
+.top-s .tag { color: var(--top-color); border-color: rgba(123,63,228,0.3); background: rgba(123,63,228,0.06); }
+
+/* Achievement cards */
+.achievement-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+
+.achievement-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 12px;
+  padding: 24px 20px;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s var(--ease-out), background 0.3s;
+}
+
+.achievement-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 2px;
+}
+
+.gd .achievement-card::before { background: linear-gradient(90deg, var(--gd-color), transparent); }
+.ty .achievement-card::before { background: linear-gradient(90deg, var(--ty-color), transparent); }
+.ds .achievement-card::before { background: linear-gradient(90deg, var(--ds-color), transparent); }
+.top-s .achievement-card::before { background: linear-gradient(90deg, var(--top-color), transparent); }
+
+.achievement-card:hover {
+  transform: translateY(-4px);
+  background: rgba(255,255,255,0.05);
+}
+
+.gd .achievement-card:hover { border-color: rgba(201,168,76,0.2); }
+.ty .achievement-card:hover { border-color: rgba(232,201,122,0.2); }
+.ds .achievement-card:hover { border-color: rgba(42,92,255,0.2); }
+.top-s .achievement-card:hover { border-color: rgba(123,63,228,0.2); }
+
+.achievement-icon {
+  font-size: 24px;
+  margin-bottom: 12px;
+  display: inline-block;
+  transition: transform 0.4s var(--spring);
+}
+
+.achievement-card:hover .achievement-icon { transform: scale(1.15) rotate(-6deg); }
+
+.achievement-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 300;
+  margin-bottom: 4px;
+}
+
+.achievement-desc {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  line-height: 1.5;
+}
+
+/* Facts strip */
+.facts-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  padding: 32px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  margin-top: 48px;
+}
+
+.fact-item { text-align: center; }
+
+.fact-num {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 42px);
+  font-weight: 300;
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.gd .fact-num { color: var(--gd-color); }
+.ty .fact-num { color: var(--ty-color); }
+.ds .fact-num { color: var(--ds-color); }
+.top-s .fact-num { color: var(--top-color); }
+
+.fact-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .member-hero-grid,
+  .member-hero-grid.reverse { grid-template-columns: 1fr; direction: ltr; }
+  .member-visual { max-height: 350px; }
+}
+
+/* ============================================================
+   TAEYANG SECTION
+   ============================================================ */
+#taeyang { background: var(--charcoal); min-height: 100vh; position: relative; }
+
+#taeyang::before {
+  content: '';
+  position: absolute;
+  bottom: -100px; right: -100px;
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(232,201,122,0.06), transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   DAESUNG SECTION
+   ============================================================ */
+#daesung { background: var(--dark); min-height: 100vh; position: relative; }
+
+#daesung::before {
+  content: '';
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(42,92,255,0.05), transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   T.O.P SECTION
+   ============================================================ */
+#top-section { background: var(--black); min-height: 100vh; position: relative; }
+
+#top-section::before {
+  content: '';
+  position: absolute;
+  top: 0; right: 0;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle at 100% 0%, rgba(123,63,228,0.1), transparent 70%);
+  pointer-events: none;
+}
+
+/* ============================================================
+   LEGACY SECTION
+   ============================================================ */
+#legacy {
+  background: var(--charcoal);
+  min-height: 100vh;
+  position: relative;
+}
+
+.legacy-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.legacy-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto clamp(60px, 8vw, 100px);
+}
+
+.legacy-header .section-title em { font-style: italic; color: var(--gold); }
+.legacy-header p {
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.85;
+}
+
+.legacy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 64px;
+}
+
+.legacy-card {
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  padding: 36px 28px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s var(--ease-out), border-color 0.3s;
+}
+
+.legacy-card:hover { transform: translateY(-8px); border-color: rgba(201,168,76,0.15); }
+
+.legacy-card-icon {
+  font-size: 32px;
+  margin-bottom: 20px;
+  display: inline-block;
+  transition: transform 0.4s var(--spring);
+}
+
+.legacy-card:hover .legacy-card-icon { transform: scale(1.15); }
+
+.legacy-card-title {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 2.5vw, 32px);
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 12px;
+}
+
+.legacy-card-text {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.8;
+}
+
+.legacy-card-accent {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.legacy-card:hover .legacy-card-accent { opacity: 1; }
+
+.legacy-impact {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.impact-item {
+  background: var(--surface);
+  padding: 40px 24px;
+  text-align: center;
+  transition: background 0.3s;
+}
+
+.impact-item:hover { background: var(--surface-2); }
+
+.impact-num {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 4.5vw, 56px);
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.impact-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .legacy-grid { grid-template-columns: 1fr; }
+  .legacy-impact { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ============================================================
+   HALLYU WAVE (general K-pop context section)
+   ============================================================ */
+#hallyu {
+  background: var(--black);
+  position: relative;
+}
+
+#hallyu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-mesh);
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.hallyu-inner { max-width: 1400px; margin: 0 auto; position: relative; z-index: 1; }
+
+.hallyu-header {
+  max-width: 760px;
+  margin-bottom: clamp(48px, 6vw, 80px);
+}
+
+.hallyu-header p {
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.85;
+}
+
+.hallyu-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+
+.hallyu-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: var(--radius-md);
+  padding: 28px 22px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.45s var(--ease-out), border-color 0.3s, background 0.3s;
+}
+
+.hallyu-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-signature);
+  opacity: 0;
+  mix-blend-mode: overlay;
+  transition: opacity 0.4s;
+}
+
+.hallyu-card:hover {
+  transform: translateY(-6px) rotate(-0.5deg);
+  border-color: rgba(201,168,76,0.25);
+  background: rgba(255,255,255,0.045);
+}
+.hallyu-card:hover::after { opacity: 0.35; }
+
+.hallyu-card-num {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: var(--muted);
+  margin-bottom: 18px;
+}
+
+.hallyu-card-title {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2vw, 26px);
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 10px;
+}
+
+.hallyu-card-text {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+@media (max-width: 1100px) { .hallyu-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .hallyu-grid { grid-template-columns: 1fr; } }
+
+/* ============================================================
+   FANDOM CULTURE (general K-pop context section)
+   ============================================================ */
+#fandom {
+  background: var(--charcoal);
+  position: relative;
+  overflow: hidden;
+}
+
+.fandom-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(48px, 6vw, 100px);
+  align-items: center;
+}
+
+.fandom-copy p {
+  font-size: clamp(15px, 1.4vw, 18px);
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+
+.fandom-lightstick {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.lightstick-row {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 20px 22px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 100px;
+  transition: transform 0.4s var(--ease-out), border-color 0.3s;
+}
+
+.lightstick-row:hover { transform: translateX(8px); border-color: rgba(201,168,76,0.2); }
+
+.lightstick-dot {
+  width: 14px; height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: lightstickPulse 2.4s ease-in-out infinite;
+  box-shadow: 0 0 20px currentColor;
+}
+
+@keyframes lightstickPulse {
+  0%, 100% { opacity: 0.55; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.15); }
+}
+
+.lightstick-row:nth-child(1) .lightstick-dot { color: var(--gold); background: var(--gold); animation-delay: 0s; }
+.lightstick-row:nth-child(2) .lightstick-dot { color: var(--sapphire); background: var(--sapphire); animation-delay: 0.4s; }
+.lightstick-row:nth-child(3) .lightstick-dot { color: var(--violet); background: var(--violet); animation-delay: 0.8s; }
+.lightstick-row:nth-child(4) .lightstick-dot { color: var(--rose); background: var(--rose); animation-delay: 1.2s; }
+
+.lightstick-text {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--platinum);
+}
+
+.lightstick-text b { color: var(--white); font-weight: 500; }
+
+@media (max-width: 900px) {
+  .fandom-inner { grid-template-columns: 1fr; }
+}
+
+/* ============================================================
+   DISCOGRAPHY
+   ============================================================ */
+#discography {
+  background: var(--black);
+  overflow: hidden;
+}
+
+.disco-inner { max-width: 1400px; margin: 0 auto; }
+
+.disco-track {
+  display: flex;
+  gap: 24px;
+  overflow-x: auto;
+  padding-bottom: 24px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.disco-track::-webkit-scrollbar { display: none; }
+
+.album-card {
+  flex: 0 0 clamp(220px, 22vw, 280px);
+  background: var(--surface);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 16px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.4s var(--ease-out), border-color 0.3s;
+  transform-style: preserve-3d;
+}
+
+.album-card:hover {
+  transform: translateY(-10px) rotateX(2deg) rotateY(-2deg);
+  border-color: rgba(201,168,76,0.2);
+}
+
+.album-art {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.album-art-inner {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.album-bg-1 { background: linear-gradient(135deg, #1a1408, #050505); }
+.album-bg-2 { background: linear-gradient(135deg, #080d1a, #050505); }
+.album-bg-3 { background: linear-gradient(135deg, #0a0814, #050505); }
+.album-bg-4 { background: linear-gradient(135deg, #0a0a0a, #111); }
+.album-bg-5 { background: linear-gradient(135deg, #140d06, #050505); }
+.album-bg-6 { background: linear-gradient(135deg, #060814, #050505); }
+
+.album-art-text {
+  font-family: var(--font-display);
+  font-size: 48px;
+  font-weight: 300;
+  color: rgba(255,255,255,0.08);
+  text-align: center;
+  padding: 20px;
+  letter-spacing: -0.02em;
+}
+
+.album-shine {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.album-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,5,0.7);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.album-overlay-text {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+}
+
+.album-card:hover .album-overlay { opacity: 1; }
+
+.album-info {
+  padding: 20px;
+}
+
+.album-title {
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 300;
+  color: var(--white);
+  margin-bottom: 4px;
+}
+
+.album-year {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 8px;
+}
+
+.album-desc {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.album-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  pointer-events: none;
+  box-shadow: 0 0 0 0 rgba(201,168,76,0);
+  transition: box-shadow 0.4s;
+}
+
+.album-card:hover .album-glow {
+  box-shadow: 0 20px 60px rgba(201,168,76,0.12);
+}
+
+.disco-hint {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--muted-dim);
+  margin-top: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.disco-hint::before { content: '↔'; color: var(--gold); }
+
+/* ============================================================
+   TIMELINE
+   ============================================================ */
+#timeline {
+  background: var(--charcoal);
+  position: relative;
+  overflow: hidden;
+}
+
+.timeline-inner {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.timeline-line {
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: rgba(255,255,255,0.08);
+  transform: translateX(-50%);
+}
+
+.timeline-line-fill {
+  position: absolute;
+  left: 0; top: 0;
+  width: 100%;
+  height: 0%;
+  background: linear-gradient(to bottom, var(--gold), var(--violet));
+  box-shadow: 0 0 12px rgba(201,168,76,0.5);
+  transition: height 0.1s linear;
+}
+
+.timeline-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 1fr 48px 1fr;
+  gap: 0;
+  position: relative;
+  padding: 0 0 48px;
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-content-left { text-align: right; padding-right: 40px; }
+.timeline-content-right { text-align: left; padding-left: 40px; }
+
+.timeline-item.right .timeline-content-left { opacity: 0; pointer-events: none; }
+.timeline-item.left .timeline-content-right { opacity: 0; pointer-events: none; }
+
+.timeline-node {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 0 3px var(--charcoal), 0 0 0 4px rgba(201,168,76,0.4), 0 0 16px rgba(201,168,76,0.4);
+  transition: box-shadow 0.3s, transform 0.3s var(--spring);
+}
+
+.timeline-item:hover .timeline-dot {
+  box-shadow: 0 0 0 3px var(--charcoal), 0 0 0 5px rgba(201,168,76,0.6), 0 0 30px rgba(201,168,76,0.6);
+  transform: scale(1.3);
+}
+
+.timeline-year {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 3.5vw, 40px);
+  font-weight: 300;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+
+.timeline-event-title {
+  font-family: var(--font-ui);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+}
+
+.timeline-event-desc {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+@media (max-width: 640px) {
+  .timeline-line { left: 24px; }
+  .timeline-item { grid-template-columns: 48px 1fr; }
+  .timeline-content-left { display: none; }
+  .timeline-item.right .timeline-content-left { display: none; }
+  .timeline-item.left .timeline-content-right { opacity: 1; pointer-events: all; }
+}
+
+/* ============================================================
+   GALLERY
+   ============================================================ */
+#gallery {
+  background: var(--dark);
+  position: relative;
+}
+
+.gallery-inner { max-width: 1400px; margin: 0 auto; }
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.gallery-item {
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  background: var(--surface);
+}
+
+.gallery-item:nth-child(3n+1) { grid-row: span 2; }
+
+.gallery-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 300;
+  position: relative;
+  overflow: hidden;
+  transition: transform 6s var(--ease-out);
+}
+
+.gallery-item:hover .gallery-placeholder { transform: scale(1.1); }
+
+.g1 { background: linear-gradient(135deg, #1a1408, #050505); color: rgba(201,168,76,0.2); }
+.g2 { background: linear-gradient(135deg, #0a0d1a, #050505); color: rgba(42,92,255,0.2); }
+.g3 { background: linear-gradient(135deg, #100814, #050505); color: rgba(123,63,228,0.2); }
+.g4 { background: linear-gradient(135deg, #0d0f0a, #050505); color: rgba(232,201,122,0.2); }
+.g5 { background: linear-gradient(135deg, #14080a, #050505); color: rgba(228,63,111,0.2); }
+.g6 { background: linear-gradient(135deg, #08120a, #050505); color: rgba(63,228,122,0.15); }
+.g7 { background: linear-gradient(135deg, #1a1205, #050505); color: rgba(201,168,76,0.15); }
+.g8 { background: linear-gradient(135deg, #08081a, #050505); color: rgba(42,92,255,0.15); }
+
+.gallery-item-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(5,5,5,0.6);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.gallery-item:hover .gallery-item-overlay { opacity: 1; }
+
+.gallery-overlay-icon {
+  font-size: 24px;
+  color: var(--gold);
+}
+
+@media (max-width: 768px) {
+  .gallery-grid { grid-template-columns: repeat(2, 1fr); }
+  .gallery-item:nth-child(3n+1) { grid-row: span 1; }
+}
+
+/* ============================================================
+   QUOTE SECTION
+   ============================================================ */
+#quote-section {
+  background: var(--black);
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#quote-section::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 80% 60% at 50% 50%,
+    rgba(201,168,76,0.05) 0%,
+    rgba(123,63,228,0.03) 40%,
+    transparent 70%);
+}
+
+.quote-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 900px;
+  padding: 0 clamp(24px, 6vw, 80px);
+}
+
+.quote-mark {
+  font-family: var(--font-display);
+  font-size: clamp(80px, 15vw, 200px);
+  color: rgba(201,168,76,0.06);
+  line-height: 0.5;
+  margin-bottom: 24px;
+  display: block;
+}
+
+.quote-text {
+  font-family: var(--font-display);
+  font-size: clamp(24px, 4vw, 52px);
+  font-weight: 300;
+  font-style: italic;
+  line-height: 1.3;
+  color: var(--white);
+  margin-bottom: 32px;
+  letter-spacing: -0.01em;
+}
+
+.quote-text .highlight {
+  color: var(--gold);
+  font-style: normal;
+}
+
+.quote-attr {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ============================================================
+   AMY MESSAGE SECTION
+   ============================================================ */
+#amy {
+  background: var(--charcoal);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#amy::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 50%,
+    rgba(228,63,111,0.06) 0%,
+    rgba(201,168,76,0.04) 40%,
+    transparent 70%);
+}
+
+.amy-inner {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 760px;
+  width: 100%;
+  padding: 0 clamp(24px, 5vw, 48px);
+}
+
+.amy-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(228,63,111,0.15);
+  border-radius: 24px;
+  padding: clamp(40px, 6vw, 80px) clamp(32px, 6vw, 80px);
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(20px);
+}
+
+.amy-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(228,63,111,0.08), transparent 60%);
+}
+
+.amy-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 24px;
+  padding: 1px;
+  background: linear-gradient(120deg, rgba(228,63,111,0.4), rgba(201,168,76,0.1), rgba(228,63,111,0.4));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.5;
+  animation: borderRotate 6s linear infinite;
+  pointer-events: none;
+}
+
+@keyframes borderRotate {
+  0% { filter: hue-rotate(0deg); }
+  100% { filter: hue-rotate(30deg); }
+}
+
+.amy-hearts {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 32px;
+}
+
+.heart {
+  font-size: 20px;
+  animation: heartFloat 2s ease-in-out infinite;
+  cursor: pointer;
+  transition: transform 0.2s var(--spring);
+  display: inline-block;
+}
+
+.heart:hover { transform: scale(1.4); }
+
+.heart:nth-child(1) { animation-delay: 0s; }
+.heart:nth-child(2) { animation-delay: 0.3s; }
+.heart:nth-child(3) { animation-delay: 0.6s; }
+.heart:nth-child(4) { animation-delay: 0.9s; }
+.heart:nth-child(5) { animation-delay: 1.2s; }
+
+@keyframes heartFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-8px) scale(1.1); }
+}
+
+.amy-label {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  color: var(--rose);
+  margin-bottom: 16px;
+}
+
+.amy-title {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 300;
+  color: var(--white);
+  line-height: 1.1;
+  margin-bottom: 32px;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+.amy-title em { font-style: italic; color: var(--rose); }
+
+.amy-message {
+  font-family: var(--font-body);
+  font-size: clamp(15px, 1.5vw, 18px);
+  font-weight: 300;
+  color: var(--platinum);
+  line-height: 1.9;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 1;
+}
+
+.amy-signature {
+  font-family: var(--font-display);
+  font-size: clamp(18px, 2.5vw, 28px);
+  font-style: italic;
+  font-weight: 300;
+  color: var(--gold);
+  position: relative;
+  z-index: 1;
+}
+
+.amy-send-love {
+  margin-top: 32px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-ui);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--white);
+  background: rgba(228,63,111,0.12);
+  border: 1px solid rgba(228,63,111,0.3);
+  padding: 12px 26px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s var(--spring), border-color 0.3s;
+  position: relative;
+  z-index: 1;
+}
+
+.amy-send-love:hover {
+  background: rgba(228,63,111,0.22);
+  border-color: rgba(228,63,111,0.5);
+  transform: translateY(-2px);
+}
+
+.amy-particles {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.amy-particle {
+  position: absolute;
+  width: 4px; height: 4px;
+  background: var(--rose);
+  border-radius: 50%;
+  opacity: 0;
+  animation: amyParticle 4s ease-in-out infinite;
+}
+
+@keyframes amyParticle {
+  0% { opacity: 0; transform: translateY(0) scale(0); }
+  20% { opacity: 0.5; transform: translateY(-20px) scale(1); }
+  80% { opacity: 0.2; }
+  100% { opacity: 0; transform: translateY(-80px) scale(0); }
+}
+
+.burst-heart {
+  position: fixed;
+  pointer-events: none;
+  font-size: 18px;
+  z-index: 9990;
+  animation: burstUp 1.4s var(--ease-out) forwards;
+}
+
+@keyframes burstUp {
+  0% { opacity: 1; transform: translate(0,0) scale(0.6) rotate(0deg); }
+  100% { opacity: 0; transform: translate(var(--dx), -140px) scale(1.2) rotate(var(--rot)); }
+}
+
+/* ============================================================
+   FOOTER
+   ============================================================ */
+#footer {
+  background: var(--black);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: clamp(48px, 6vw, 80px) clamp(24px, 6vw, 100px) clamp(32px, 4vw, 48px);
+  position: relative;
+  overflow: hidden;
+}
+
+#footer::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(201,168,76,0.4), transparent);
+}
+
+.footer-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: clamp(32px, 5vw, 80px);
+  margin-bottom: 60px;
+}
+
+.footer-brand {}
+
+.footer-logo {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 300;
+  letter-spacing: 0.2em;
+  color: var(--white);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.footer-logo span { color: var(--gold); }
+
+.footer-tagline {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 280px;
+}
+
+.footer-col-title {
+  font-family: var(--font-ui);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.footer-links {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.footer-links a {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.3s, padding-left 0.3s;
+  position: relative;
+}
+
+.footer-links a:hover { color: var(--white); padding-left: 6px; }
+
+.footer-bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 32px;
+  border-top: 1px solid rgba(255,255,255,0.06);
+}
+
+.footer-copy {
+  font-family: var(--font-ui);
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+}
+
+.footer-back-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.3s;
+  background: none;
+  border: none;
+}
+
+.footer-back-top:hover { color: var(--gold); }
+
+.footer-back-icon {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: border-color 0.3s, background 0.3s;
+}
+
+.footer-back-top:hover .footer-back-icon {
+  border-color: var(--gold);
+  background: rgba(201,168,76,0.1);
+}
+
+@media (max-width: 900px) {
+  .footer-top { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+  .footer-top { grid-template-columns: 1fr; }
+  .footer-bottom { flex-direction: column; gap: 24px; }
+}
+
+/* ============================================================
+   UTILITY
+   ============================================================ */
+.text-gold { color: var(--gold); }
+.text-muted { color: var(--muted); }
+.text-italic { font-style: italic; }
+
+/* Glass card */
+.glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Gradient text */
+.gradient-text {
+  background: var(--gradient-signature);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  background-size: 200% auto;
+  animation: gradientShift 6s ease-in-out infinite;
+}
+
+@keyframes gradientShift {
+  0%, 100% { background-position: 0% center; }
+  50% { background-position: 100% center; }
+}
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .hero-title .letter { opacity: 1; transform: none; }
+  .ticker-track { animation: none; }
+  #heart-intro { transition: none; }
+  .heart-word, .heart-center-text { animation: none !important; opacity: 0.9 !important; }
+}
+
+/* ============================================================
+   SHIMMER ANIMATION
+   ============================================================ */
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.shimmer {
+  background: linear-gradient(90deg,
+    transparent 0%, rgba(201,168,76,0.15) 50%, transparent 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s ease-in-out infinite;
+}
+
+/* ============================================================
+   SECTION TRANSITIONS
+   ============================================================ */
+.section-bg-anim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.floating-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  animation: orbFloat 10s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(30px, -20px); }
+  66% { transform: translate(-20px, 30px); }
+}
+
+/* Progress bar for skills */
+.skill-bar {
+  margin-bottom: 16px;
+}
+
+.skill-bar-label {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-family: var(--font-ui);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.skill-bar-label span:first-child { color: var(--platinum); }
+.skill-bar-label span:last-child { color: var(--muted); }
+
+.skill-bar-track {
+  height: 2px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.skill-bar-fill {
+  height: 100%;
+  border-radius: 2px;
+  width: 0%;
+  transition: width 1.2s var(--ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.skill-bar-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+  transform: translateX(-100%);
+  animation: skillShine 2.4s ease-in-out infinite;
+  animation-delay: 1.4s;
+}
+
+@keyframes skillShine {
+  to { transform: translateX(100%); }
+}
+
+.gd .skill-bar-fill { background: linear-gradient(90deg, var(--gd-color), rgba(201,168,76,0.4)); }
+.ty .skill-bar-fill { background: linear-gradient(90deg, var(--ty-color), rgba(232,201,122,0.4)); }
+.ds .skill-bar-fill { background: linear-gradient(90deg, var(--ds-color), rgba(42,92,255,0.4)); }
+.top-s .skill-bar-fill { background: linear-gradient(90deg, var(--top-color), rgba(123,63,228,0.4)); }
+</style>
+</head>
+<body>
+
+<!-- "I love you" heart intro — plays first, before the preloader -->
+<div id="heart-intro" role="status" aria-label="Loading, I love you">
+  <div class="heart-intro-stage" id="heart-intro-stage">
+    <div class="heart-center-text">I love you</div>
+  </div>
+  <p class="heart-intro-label">For Amy</p>
+</div>
+
+<!-- Preloader -->
+<div id="preloader" role="status" aria-label="Loading">
+  <div class="preloader-mark">BIG<span>BANG</span></div>
+  <div class="preloader-bar"><div class="preloader-bar-fill"></div></div>
+  <div class="preloader-label">Loading the page</div>
+</div>
+
+<!-- Cursor -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<div id="cursor-trail"></div>
+
+<!-- Scroll-to-top ring -->
+<div id="progress-ring-wrap">
+  <svg viewBox="0 0 56 56">
+    <circle class="ring-bg" cx="28" cy="28" r="25"></circle>
+    <circle class="ring-fg" id="ring-fg" cx="28" cy="28" r="25"></circle>
+  </svg>
+  <button aria-label="Back to top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+</div>
+
+<!-- ============================================================
+     NAVIGATION
+     ============================================================ -->
+<nav id="nav" role="navigation" aria-label="Main navigation">
+  <a href="#hero" class="nav-logo">BIG<span>BANG</span></a>
+  <div class="nav-right">
+    <a href="https://articembers.github.io/amybdayglobal/" class="nav-hub-link">← Hub</a>
+    <ul class="nav-links">
+      <li><a href="#intro">Legacy</a></li>
+      <li><a href="#gdragon">G-Dragon</a></li>
+      <li><a href="#taeyang">Taeyang</a></li>
+      <li><a href="#daesung">Daesung</a></li>
+      <li><a href="#top-section">T.O.P</a></li>
+      <li><a href="#timeline">Timeline</a></li>
+      <li><a href="#amy">For Amy</a></li>
+    </ul>
+  </div>
+  <div class="nav-hamburger" role="button" aria-label="Open menu" tabindex="0">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="nav-progress" id="nav-progress"></div>
+</nav>
+
+<!-- ============================================================
+     HERO
+     ============================================================ -->
+<section id="hero" aria-label="Hero">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-bg" aria-hidden="true"></div>
+
+  <div class="hero-shape hero-shape-1" aria-hidden="true"></div>
+  <div class="hero-shape hero-shape-2" aria-hidden="true"></div>
+  <div class="hero-shape hero-shape-3" aria-hidden="true"></div>
+  <div class="hero-shape hero-shape-4" aria-hidden="true"></div>
+  <div class="lens-flare" aria-hidden="true"></div>
+
+  <div class="hero-content">
+    <p class="hero-eyebrow">Est. 2006 · Seoul, South Korea</p>
+    <h1 class="hero-title" id="hero-title-text">
+      BIG<br><span class="outline">BANG</span>
+    </h1>
+    <p class="hero-subtitle">Five artists. One phenomenon. A legacy that redefined what K-Pop could be for the world.</p>
+    <a href="#intro" class="hero-cta">
+      <span>Enter the Experience</span>
+      <span class="arrow">↓</span>
+    </a>
+  </div>
+
+  <div class="hero-scroll" aria-hidden="true">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-text">Scroll</span>
+  </div>
+</section>
+
+<!-- Ambient ticker -->
+<div class="ticker-strip" aria-hidden="true">
+  <div class="ticker-track">
+    <span>Hallyu Wave</span><span>VIP Nation</span><span>World Tours</span><span>Global Charts</span><span>Fan Chants</span><span>Comeback Season</span><span>Seoul to the World</span>
+    <span>Hallyu Wave</span><span>VIP Nation</span><span>World Tours</span><span>Global Charts</span><span>Fan Chants</span><span>Comeback Season</span><span>Seoul to the World</span>
+  </div>
+</div>
+
+<!-- ============================================================
+     INTRODUCTION
+     ============================================================ -->
+<section id="intro" class="section" aria-label="Introduction">
+  <div class="intro-grid">
+    <div class="intro-left">
+      <p class="section-label reveal">The Group</p>
+      <h2 class="section-title reveal delay-1">
+        A Force That <em>Changed</em> Everything
+      </h2>
+      <p class="reveal delay-2">
+        BIGBANG came from YG Entertainment in 2006. They were five men, with a really cool idea. They wanted to mix hip-hop and R&B and pop and electronic music to make something totally new. BIGBANG wanted to create music that the world had never heard before.
+      </p>
+      <p class="reveal delay-3">
+        For twenty years the band members of this group did some amazing things. They broke lots of records. They got fans around the world to love them. Korean pop music is really popular. They helped make it that way. They also helped people from cultures like the same music. The band members made some great music that people will always remember. At the time each member of the group also had a very successful music career on their own. They are all very famous for the music they made with the group and for the music they made by themselves. The Korean pop group shattered records. They built a big following of fans all around the world. The Korean pop group also influenced what people wear. They helped people from different cultures, like each other. The Korean pop group made some great music and each member of the Korean pop group had a very successful solo music career.
+      </p>
+      <p class="reveal delay-4">
+        G-Dragon, Taeyang, Daesung, T.O.P and Seungri did not just become stars. They became important parts of pop culture. Their impact still affects every group of K-Pop fans and artists that comes out.
+
+        Their music and style have inspired many. Today young K-Pop stars look up to them. G-Dragon, Taeyang, Daesung, T.O.P and Seungri were truly game-changers, in K-Pop.
+      </p>
+      <div class="intro-stats reveal delay-5">
+        <div class="intro-stat">
+          <div class="stat-num counter" data-target="150">0</div>
+          <div class="stat-label">Million Records</div>
+        </div>
+        <div class="intro-stat">
+          <div class="stat-num counter" data-target="18">0</div>
+          <div class="stat-label">Years Active</div>
+        </div>
+        <div class="intro-stat">
+          <div class="stat-num counter" data-target="32">0</div>
+          <div class="stat-label">World Tours</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="intro-right reveal-right delay-2">
+      <a href="#gdragon" class="member-preview gd" style="text-decoration:none;">
+        <div class="member-preview-num">01</div>
+        <div class="member-preview-icon">G</div>
+        <div class="member-preview-name">G-Dragon</div>
+        <div class="member-preview-role">Rapper · Producer · Icon</div>
+      </a>
+      <a href="#taeyang" class="member-preview ty" style="text-decoration:none;">
+        <div class="member-preview-num">02</div>
+        <div class="member-preview-icon">T</div>
+        <div class="member-preview-name">Taeyang</div>
+        <div class="member-preview-role">Vocalist · Dancer · Soul</div>
+      </a>
+      <a href="#daesung" class="member-preview ds" style="text-decoration:none;">
+        <div class="member-preview-num">03</div>
+        <div class="member-preview-icon">D</div>
+        <div class="member-preview-name">Daesung</div>
+        <div class="member-preview-role">Vocalist · Comedian · Heart</div>
+      </a>
+      <a href="#top-section" class="member-preview top" style="text-decoration:none;">
+        <div class="member-preview-num">04</div>
+        <div class="member-preview-icon">T</div>
+        <div class="member-preview-name">T.O.P</div>
+        <div class="member-preview-role">Rapper · Actor · Visionary</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-mark"></span></div>
+
+<!-- ============================================================
+     G-DRAGON
+     ============================================================ -->
+<section id="gdragon" class="section gd" aria-label="G-Dragon">
+  <div class="section-bg-anim" aria-hidden="true">
+    <div class="floating-orb" style="width:400px;height:400px;background:rgba(201,168,76,0.04);top:10%;left:-10%;animation-duration:12s;"></div>
+    <div class="floating-orb" style="width:200px;height:200px;background:rgba(201,168,76,0.06);bottom:20%;right:5%;animation-duration:9s;animation-delay:-3s;"></div>
+  </div>
+  <div class="member-section-inner">
+    <div class="member-hero-grid">
+      <div class="member-visual reveal-left">
+        <div class="member-visual-bg gd-bg"></div>
+        <div class="member-visual-placeholder">
+          <div class="member-visual-name gd-name">G-D</div>
+          <div class="member-visual-label">Kwon Ji-yong</div>
+        </div>
+        <div class="member-visual-border gd-border"></div>
+      </div>
+      <div class="member-info">
+        <p class="member-section-label gd-label reveal">G-Dragon</p>
+        <h2 class="member-title reveal delay-1">G-Dragon</h2>
+        <p class="member-real-name reveal delay-1">Kwon Ji-yong · 권지용</p>
+
+        <div class="member-tags reveal delay-2">
+          <span class="tag">Rapper</span>
+          <span class="tag">Producer</span>
+          <span class="tag">Fashion Icon</span>
+          <span class="tag">Songwriter</span>
+          <span class="tag">Creative Director</span>
+        </div>
+
+        <p class="member-bio reveal delay-2">
+          Kwon Ji-yong, who is also known as G-Dragon is a big deal. He is not a musician. G-Dragon is an artist who is changing things for his generation. His music and style are loved by people around the world.
+
+          G-Dragon was born on August 18 1988 in Seoul. When he was six years old he started working with YG Entertainment. G-Dragon trained with them for, than ten years. Then he became the leader of BIGBANG and the main person who comes up with the groups ideas and music.
+        </p>
+        <p class="member-bio reveal delay-3">
+         As the leader and main songwriter of the group G-Dragon has written most of BIGBANGs songs.
+
+         He also has a solo career. His first solo album was Heartbreaker in 2009.
+
+         Then he released Coup d'Etat and KWON JIYONG, which are considered important projects.
+
+         These projects made G-Dragon a well-known and respected creative person, in K-Pop.
+
+         G-Dragon and BIGBANG are still popular today.
+        </p>
+
+        <blockquote class="member-quote reveal delay-3">
+          "Fashion is my weapon. Music is my soul. I live to create."
+        </blockquote>
+
+        <div class="achievement-cards reveal delay-4">
+          <div class="achievement-card">
+            <div class="achievement-icon">🏆</div>
+            <div class="achievement-title">100M+</div>
+            <div class="achievement-desc">Solo streams across career</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">🎨</div>
+            <div class="achievement-title">Nike & Chanel</div>
+            <div class="achievement-desc">Global fashion collaborations</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">🌍</div>
+            <div class="achievement-title">#1 Icon</div>
+            <div class="achievement-desc">TIME's Most Influential</div>
+          </div>
+        </div>
+
+        <div class="facts-strip reveal delay-5">
+          <div class="fact-item">
+            <div class="fact-num">6</div>
+            <div class="fact-label">Age Signed</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">4</div>
+            <div class="fact-label">Solo Albums</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">200+</div>
+            <div class="fact-label">Songs Written</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">24.5M+</div>
+            <div class="fact-label">IG Followers</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Skill bars -->
+    <div class="reveal" style="max-width:500px; margin-top: 0;">
+      <p class="section-label">Artistry</p>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Songwriting</span><span>98%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="98"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Fashion Innovation</span><span>96%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="96"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Stage Presence</span><span>99%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="99"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Cultural Impact</span><span>97%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="97"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-mark"></span></div>
+
+<!-- ============================================================
+     TAEYANG
+     ============================================================ -->
+<section id="taeyang" class="section ty" aria-label="Taeyang">
+  <div class="section-bg-anim" aria-hidden="true">
+    <div class="floating-orb" style="width:350px;height:350px;background:rgba(232,201,122,0.05);top:30%;right:-5%;animation-duration:11s;"></div>
+  </div>
+  <div class="member-section-inner">
+    <div class="member-hero-grid reverse">
+      <div class="member-visual reveal-right">
+        <div class="member-visual-bg ty-bg"></div>
+        <div class="member-visual-placeholder">
+          <div class="member-visual-name ty-name">SOL</div>
+          <div class="member-visual-label">Dong Young-bae</div>
+        </div>
+        <div class="member-visual-border ty-border"></div>
+      </div>
+      <div class="member-info">
+        <p class="member-section-label ty-label reveal">Taeyang</p>
+        <h2 class="member-title reveal delay-1">Taeyang</h2>
+        <p class="member-real-name reveal delay-1">Dong Young-bae · 동영배</p>
+
+        <div class="member-tags reveal delay-2">
+          <span class="tag">Vocalist</span>
+          <span class="tag">Dancer</span>
+          <span class="tag">R&B Artist</span>
+          <span class="tag">Soul</span>
+          <span class="tag">Performer</span>
+        </div>
+
+        <p class="member-bio reveal delay-2">
+         Dong Young-bae, also known as Taeyang, which means the sun is a great singer and dancer in K-Pop.
+
+         He has a strong and soulful voice that makes BIGBANGs songs feel emotional.
+
+         Taeyang was born on May 18 1988.
+
+         He has been friends with Ji-yong since they were kids and started training at YG.
+
+         Taeyang and Ji-yong have been through a lot together. Taeyangs voice is a big part of what makes BIGBANG special.
+
+         Taeyangs voice is really something that brings out the feelings, in BIGBANGs music.
+        </p>
+        <p class="member-bio reveal delay-3">
+         The music that Taeyang makes by himself, like the good albums HOT, RINGA LINGA and White Night shows that he can mix R&B and K-Pop in a special way. The song Eyes, Nose, Lips is one that a lot of people like to cover. <br> That is because Taeyang sings it with a lot of feeling. He always sings with his heart. That is what makes his music so good. The song Eyes, Nose, Lips is an example of what Taeyang can do and it is one of the reasons why people love his music.
+        <blockquote class="member-quote reveal delay-3">
+          "When I sing, I want the person listening to feel exactly what I feel, no walls between us."
+        </blockquote>
+
+        <div class="achievement-cards reveal delay-4">
+          <div class="achievement-card">
+            <div class="achievement-icon">🎤</div>
+            <div class="achievement-title">Eyes Nose Lips</div>
+            <div class="achievement-desc">Most covered K-Pop ballad ever</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">💃</div>
+            <div class="achievement-title">Elite Dancer</div>
+            <div class="achievement-desc">Michael Jackson inspiration</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">☀️</div>
+            <div class="achievement-title">White Night</div>
+            <div class="achievement-desc">Concert series in 12 cities</div>
+          </div>
+        </div>
+
+        <div class="facts-strip reveal delay-5">
+          <div class="fact-item">
+            <div class="fact-num">4</div>
+            <div class="fact-label">Solo Albums</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">4</div>
+            <div class="fact-label">World Tours</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">100+</div>
+            <div class="fact-label">Dance Awards</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">2010</div>
+            <div class="fact-label">Breakthrough Year</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="max-width:500px; margin-top: 0;">
+      <p class="section-label">Artistry</p>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Vocal Range</span><span>97%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="97"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Dance Mastery</span><span>99%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="99"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Emotional Depth</span><span>98%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="98"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Performance Energy</span><span>96%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="96"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-mark"></span></div>
+
+<!-- ============================================================
+     DAESUNG
+     ============================================================ -->
+<section id="daesung" class="section ds" aria-label="Daesung">
+  <div class="section-bg-anim" aria-hidden="true">
+    <div class="floating-orb" style="width:500px;height:500px;background:rgba(42,92,255,0.04);top:20%;left:30%;animation-duration:14s;"></div>
+  </div>
+  <div class="member-section-inner">
+    <div class="member-hero-grid">
+      <div class="member-visual reveal-left">
+        <div class="member-visual-bg ds-bg"></div>
+        <div class="member-visual-placeholder">
+          <div class="member-visual-name ds-name">D-LITE</div>
+          <div class="member-visual-label">Kang Daesung</div>
+        </div>
+        <div class="member-visual-border ds-border"></div>
+      </div>
+      <div class="member-info">
+        <p class="member-section-label ds-label reveal">Daesung</p>
+        <h2 class="member-title reveal delay-1">Daesung</h2>
+        <p class="member-real-name reveal delay-1">Kang Daesung · 강대성</p>
+
+        <div class="member-tags reveal delay-2">
+          <span class="tag">Main Vocalist</span>
+          <span class="tag">D-LITE</span>
+          <span class="tag">Japan Star</span>
+          <span class="tag">Comedian</span>
+          <span class="tag">Powerhouse</span>
+        </div>
+
+        <p class="member-bio reveal delay-2">
+          Kang Daesung is the singer of BIGBANG and maybe the most hidden gem of the group. He has a voice that can be really loud and strong but really soft and gentle. Daesung makes BIGBANGs sad songs feel real because he sings them with a lot of heart. Kang Daesung was born on April 26 1989. People love him because he is a person and he makes the group feel happy too. Kang Daesung is, like the friendly part of BIGBANG.
+        </p>
+        <p class="member-bio reveal delay-3">
+          In Japan Daesung became a star under his solo name <em>D-LITE</em> with many number-one albums on the Oricon charts. Daesung has a way of reaching people with his funny side, his humble nature and his amazing voice. This is why Daesung is so loved by VIPs around the world. Daesung is really good, at making people like him. Daesung has a lot of fans because of this.
+        </p>
+
+        <blockquote class="member-quote reveal delay-3">
+          "I just want to make people feel something, make them smile, make them cry. Both is perfect."
+        </blockquote>
+
+        <div class="achievement-cards reveal delay-4">
+          <div class="achievement-card">
+            <div class="achievement-icon">🇯🇵</div>
+            <div class="achievement-title">#1 Japan</div>
+            <div class="achievement-desc">Multiple Oricon chart toppers</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">🎭</div>
+            <div class="achievement-title">D-LITE Tours</div>
+            <div class="achievement-desc">Stadium-filling solo Japan shows</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">❤️</div>
+            <div class="achievement-title">Fan Favorite</div>
+            <div class="achievement-desc">VIP's most-loved personality</div>
+          </div>
+        </div>
+
+        <div class="facts-strip reveal delay-5">
+          <div class="fact-item">
+            <div class="fact-num">4</div>
+            <div class="fact-label">Japan Albums</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">1</div>
+            <div class="fact-label">Japan Dome Tours</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">2013</div>
+            <div class="fact-label">Solo Debut</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">∞</div>
+            <div class="fact-label">Smiles Given</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="max-width:500px; margin-top: 0;">
+      <p class="section-label">Artistry</p>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Vocal Power</span><span>98%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="98"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Japan Market Reach</span><span>97%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="97"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Charisma & Warmth</span><span>99%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="99"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Live Performance</span><span>96%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="96"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-mark"></span></div>
+
+<!-- ============================================================
+     T.O.P
+     ============================================================ -->
+<section id="top-section" class="section top-s" aria-label="T.O.P">
+  <div class="section-bg-anim" aria-hidden="true">
+    <div class="floating-orb" style="width:450px;height:450px;background:rgba(123,63,228,0.05);top:10%;right:10%;animation-duration:13s;"></div>
+    <div class="floating-orb" style="width:200px;height:200px;background:rgba(123,63,228,0.07);bottom:15%;left:5%;animation-duration:9s;animation-delay:-5s;"></div>
+  </div>
+  <div class="member-section-inner">
+    <div class="member-hero-grid reverse">
+      <div class="member-visual reveal-right">
+        <div class="member-visual-bg top-bg"></div>
+        <div class="member-visual-placeholder">
+          <div class="member-visual-name top-name">T.O.P</div>
+          <div class="member-visual-label">Choi Seung-hyun</div>
+        </div>
+        <div class="member-visual-border top-border"></div>
+      </div>
+      <div class="member-info">
+        <p class="member-section-label top-label reveal">T.O.P</p>
+        <h2 class="member-title reveal delay-1">T.O.P</h2>
+        <p class="member-real-name reveal delay-1">Choi Seung-hyun · 최승현</p>
+
+        <div class="member-tags reveal delay-2">
+          <span class="tag">Rapper</span>
+          <span class="tag">Actor</span>
+          <span class="tag">Art Collector</span>
+          <span class="tag">Visionary</span>
+          <span class="tag">Aesthete</span>
+        </div>
+
+        <p class="member-bio reveal delay-2">
+          Choi Seung-hyun, known as T.O.P is what makes BIGBANG really cool. He is an unique and mysterious person who puts art and philosophy into everything he does on stage. T.O.P was born on November 4 1987. He is the member of BIGBANG and people think he is the most good looking performer in K-Pop. T.O.P has a way of performing that is, like a movie.
+        </p>
+        <p class="member-bio reveal delay-3">
+          As a rapper T.O.P has a unique voice and writes thoughtful lyrics.
+
+He is also an actor. Has been in some great Korean movies and TV shows like <em>Tazza: The Hidden Card</em> and <em>Into the Fire</em>.
+
+T.O.P loves art. Has even put together amazing modern art collections for exhibitions around the world.
+
+He is an artist, in every way.
+        </p>
+
+        <blockquote class="member-quote reveal delay-3">
+          "Art, music, film, they are all the same language. I speak only in that language."
+        </blockquote>
+
+        <div class="achievement-cards reveal delay-4">
+          <div class="achievement-card">
+            <div class="achievement-icon">🎬</div>
+            <div class="achievement-title">Actor</div>
+            <div class="achievement-desc">Box office hits in Korea</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">🖼️</div>
+            <div class="achievement-title">Art Curator</div>
+            <div class="achievement-desc">Contemporary art exhibitions</div>
+          </div>
+          <div class="achievement-card">
+            <div class="achievement-icon">🎤</div>
+            <div class="achievement-title">Iconic Voice</div>
+            <div class="achievement-desc">Deepest baritone in K-Pop</div>
+          </div>
+        </div>
+
+        <div class="facts-strip reveal delay-5">
+          <div class="fact-item">
+            <div class="fact-num">8</div>
+            <div class="fact-label">Film Roles</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">1987</div>
+            <div class="fact-label">Born in Seoul</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">2</div>
+            <div class="fact-label">Solo releases</div>
+          </div>
+          <div class="fact-item">
+            <div class="fact-num">∞</div>
+            <div class="fact-label">Aesthetic Vision</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reveal" style="max-width:500px; margin-top: 0;">
+      <p class="section-label">Artistry</p>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Rap Delivery</span><span>97%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="97"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Acting Range</span><span>94%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="94"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Visual Presence</span><span>99%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="99"></div></div>
+      </div>
+      <div class="skill-bar">
+        <div class="skill-bar-label"><span>Artistic Vision</span><span>98%</span></div>
+        <div class="skill-bar-track"><div class="skill-bar-fill" data-width="98"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"><span class="divider-mark"></span></div>
+
+<!-- ============================================================
+     LEGACY
+     ============================================================ -->
+<section id="legacy" class="section" aria-label="BIGBANG Legacy">
+  <div class="legacy-inner">
+    <div class="legacy-header">
+      <p class="section-label reveal" style="justify-content: center;">The Legacy</p>
+      <h2 class="section-title reveal delay-1">What BIGBANG <em>Built</em></h2>
+      <p class="reveal delay-2">
+        Before we had BTS and before we had EXO there was this big group called BIGBANG.<br>
+
+They were the ones who showed everyone that music from Korea could be really big everywhere.<br>
+
+I mean BIGBANG could sell out stadiums in every part of the world which's a pretty big deal.<br>
+
+BIGBANG proved that a musician could be super famous in Korea and still be really important in cities like New York, Paris and São Paulo.<br>
+
+BIGBANG was a deal and they helped make Korean music popular all, over the world with BIGBANG leading the way and that is really cool.
+      </p>
+    </div>
+
+    <div class="legacy-grid">
+      <div class="legacy-card reveal">
+        <div class="legacy-card-icon">🌊</div>
+        <div class="legacy-card-title">The Wave Makers</div>
+        <div class="legacy-card-text">BIGBANG was one of the K-Pop groups to really make it big in the West.<br>
+
+They helped open doors for groups.<br>
+
+Their 2012 Alive Galaxy Tour made over $100 million worldwide.<br>
+
+BIGBANG showed that K-Pop could be a success, in markets.</div>
+        <div class="legacy-card-accent"></div>
+      </div>
+      <div class="legacy-card reveal delay-2">
+        <div class="legacy-card-icon">👗</div>
+        <div class="legacy-card-title">Fashion Architects</div>
+        <div class="legacy-card-text">G-Dragons impact on fashion is huge. He worked with brands like Chanel, NIKE and his own label Peaceminusone. This helped make K-Pop a major player in fashion.
+
+Korean style is now part of the luxury fashion talk around the world thanks to G-Dragon.
+
+He made K-Pop and Korean aesthetics important in the fashion world.
+
+G-Dragons fashion influence is still going strong.
+
+K-Pop and fashion are now. G-Dragon is a big reason, for that.</div>
+        <div class="legacy-card-accent"></div>
+      </div>
+      <div class="legacy-card reveal delay-4">
+        <div class="legacy-card-icon">🎵</div>
+        <div class="legacy-card-title">Musical Architects</div>
+        <div class="legacy-card-text">From songs like "Fantastic Baby" that have a feel to emotional songs like "Blue" and "Haru Haru " BIGBANG changed the sound of K-Pop. They added styles like hip-hop, EDM, R&B and rock to K-Pop music. BIGBANG made these styles fit well with K-Pop.
+
+BIGBANG made K-Pop sound more interesting by mixing types of music.
+
+They made songs that're energetic and songs that are emotional.
+
+BIGBANGs music includes hip-hop, EDM, R&B and rock.
+
+These styles are part of what makes K-Pop, from BIGBANG special.
+
+The group made K-Pop with a mix of styles.
+
+BIGBANG is known for their K-Pop music that has influences.</div>
+        <div class="legacy-card-accent"></div>
+      </div>
+      <div class="legacy-card reveal delay-1">
+        <div class="legacy-card-icon">🏟️</div>
+        <div class="legacy-card-title">Concert Legends</div>
+        <div class="legacy-card-text">Their concert shows. With fireworks flying stages and huge LED screens. Changed what a K-Pop concert can be.
+
+They set a bar, for concert productions that made other K-Pop concerts look different.
+
+K-Pop concerts now have better shows.
+
+The K-Pop concerts have more to offer with these productions.
+
+K-Pop fans love the exciting live shows.</div>
+        <div class="legacy-card-accent"></div>
+      </div>
+      <div class="legacy-card reveal delay-3">
+        <div class="legacy-card-icon">🎬</div>
+        <div class="legacy-card-title">Multi-Dimensional Artists</div>
+        <div class="legacy-card-text">BIGBANG was different from idol groups because each member of BIGBANG did their own thing. T.O.P did some acting. G-Dragon got into fashion. Taeyang became really good at dance. Daesung became a star, in Japan. This shows that the members of BIGBANG were artists, not just people who perform. BIGBANG members were talented in areas.</div>
+        <div class="legacy-card-accent"></div>
+      </div>
+      <div class="legacy-card reveal delay-5">
+        <div class="legacy-card-icon">🌏</div>
+        <div class="legacy-card-title">VIP Nation</div>
+        <div class="legacy-card-text">Their fans, called VIPs are super loyal. Have been with BIGBANG for a long time. When the band took breaks had to do military service or were away, for years their fans stuck around. This shows how much BIGBANGs music and art really mean to their VIPs.
+
+The fans love BIGBANG and BIGBANGs music much.
+
+BIGBANGs fans are an example of how music can bring people together.</div>
+        <div class="legacy-card-accent"></div>
+      </div>
+    </div>
+
+    <div class="legacy-impact reveal delay-2">
+      <div class="impact-item">
+        <div class="impact-num counter" data-target="150">0</div>
+        <div class="impact-label">Million Records Sold</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-num counter" data-target="64">0</div>
+        <div class="impact-label">Countries Toured</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-num counter" data-target="200">0</div>
+        <div class="impact-label">Awards Won</div>
+      </div>
+      <div class="impact-item">
+        <div class="impact-num counter" data-target="18">0</div>
+        <div class="impact-label">Years of Legacy</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     HALLYU WAVE — general K-Pop industry context
+     ============================================================ -->
+<section id="hallyu" class="section" aria-label="The Hallyu Wave">
+  <div class="hallyu-inner">
+    <div class="hallyu-header">
+      <p class="section-label reveal">Bigger Picture</p>
+      <h2 class="section-title reveal delay-1">Inside the <span class="gradient-text">Hallyu Wave</span></h2>
+      <p class="reveal delay-2">
+        K-Pop did not become popular worldwide in one day. It took a lot of effort, planning and trust that music from Korea could be loved by people<br>
+
+The groups trained for hours long before they became famous.<br>
+
+The companies created programs to help young trainees become performers who could sing, dance and act all, at once.<br>
+
+This is the world BIGBANG came from. Its still growing today with K-Pop groups and music making waves globally and K-Pop fans loving the music.
+      </p>
+    </div>
+
+    <div class="hallyu-grid">
+      <div class="hallyu-card reveal">
+        <div class="hallyu-card-num">01</div>
+        <div class="hallyu-card-title">The Trainee System</div>
+        <div class="hallyu-card-text">Long before they debut most K-Pop idols train for years, in singing, dancing and languages. The training path is tough and a few trainees make it to the stage. K-Pop idols work hard on their singing, dancing and languages. It is not easy to become a K-Pop idol. Many trainees try,. Only a small number succeed.</div>
+      </div>
+      <div class="hallyu-card reveal delay-1">
+        <div class="hallyu-card-num">02</div>
+        <div class="hallyu-card-title">Comeback Culture</div>
+        <div class="hallyu-card-text">A "comeback" is not just a new song, it is a whole new era. New concept, new styling, new choreography, new music videos, all released together, like a small production.</div>
+      </div>
+      <div class="hallyu-card reveal delay-2">
+        <div class="hallyu-card-num">03</div>
+        <div class="hallyu-card-title">Music Show Culture</div>
+        <div class="hallyu-card-text">Weekly music shows in Korea are super popular.<br>
+
+Fans get to vote for their artists and watch them perform live.<br>
+
+It's a thrill for any group to win a trophy on one of these shows.<br>
+
+These music shows are a deal in Korea.<br>
+
+Fans love watching their favorite acts perform live and vote for them.<br>
+
+Winning a trophy is still a honor, for any music group.</div>
+      </div>
+      <div class="hallyu-card reveal delay-3">
+        <div class="hallyu-card-num">04</div>
+        <div class="hallyu-card-title">Global Streaming</div>
+        <div class="hallyu-card-text">Playlists, fan uploaded videos with subtitles and reaction videos helped spread K-Pop globally way beyond Korea. This allowed fans from all timezones to find a group on the same week it first appears.<br>
+
+Fans can now easily discover K-Pop groups like they did with this one right when they debut.<br>
+
+K-Pop groups get fast thanks, to these uploads and videos.<br>
+
+They let fans worldwide enjoy K-Pop no matter where they live.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FANDOM CULTURE — general K-Pop context
+     ============================================================ -->
+<section id="fandom" class="section" aria-label="Fandom Culture">
+  <div class="fandom-inner">
+    <div class="fandom-copy">
+      <p class="section-label reveal">Fandom Culture</p>
+      <h2 class="section-title reveal delay-1">Lightsticks & <em class="text-gold">Loyalty</em></h2>
+      <p class="reveal delay-2">
+        Every K-Pop fandom has its own name, its own color, and its own lightstick, and waving one at a concert is like being part of one huge, glowing crowd. Fans learn fan chants by heart, cheer specific member names between song lines, and treat a concert like a reunion instead of just a show.
+      </p>
+      <p class="reveal delay-3">
+        Fandoms also take care of each other. Long after cameras stop rolling, fans keep sharing old performances, translating interviews, and welcoming new fans who are just discovering a group for the first time. It is one of the reasons K-Pop fan communities can stay so close, even across countries and years.
+      </p>
+    </div>
+
+    <div class="fandom-lightstick reveal-right delay-2">
+      <div class="lightstick-row">
+        <span class="lightstick-dot"></span>
+        <span class="lightstick-text"><b>The Chant</b> — fans call out member names between lines, live, every show.</span>
+      </div>
+      <div class="lightstick-row">
+        <span class="lightstick-dot"></span>
+        <span class="lightstick-text"><b>The Glow</b> — a sea of lightsticks turns a stadium into one shared color.</span>
+      </div>
+      <div class="lightstick-row">
+        <span class="lightstick-dot"></span>
+        <span class="lightstick-text"><b>The Vote</b> — fandoms organize online to push a comeback up the charts.</span>
+      </div>
+      <div class="lightstick-row">
+        <span class="lightstick-dot"></span>
+        <span class="lightstick-text"><b>The Welcome</b> — veteran fans translate and explain for anyone just joining in.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     QUOTE
+     ============================================================ -->
+<section id="quote-section" aria-label="Quote">
+  <div class="quote-content">
+    <span class="quote-mark reveal">"</span>
+    <p class="quote-text reveal delay-1">
+      We didn't want to be the <span class="highlight">biggest</span> K-Pop group. We wanted to make music that <span class="highlight">lasts forever.</span>
+    </p>
+    <p class="quote-attr reveal delay-3">, G-Dragon, BIGBANG</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     DISCOGRAPHY
+     ============================================================ -->
+<section id="discography" class="section" aria-label="Discography">
+  <div class="disco-inner">
+    <p class="section-label reveal">Discography</p>
+    <h2 class="section-title reveal delay-1">The Catalog</h2>
+    <p class="reveal delay-2" style="color:var(--muted); font-weight:300; max-width:600px; margin-bottom: 24px;">
+      BIGBANGs music starts with their debut songs, which people really love.<br>
+
+It goes all the way to albums that're like a big deal.<br>
+
+The music they make is really diverse. Talks about many feelings.<br>
+
+Not many groups can say they've achieved what BIGBANG has with their music.<br>
+
+BIGBANG makes songs that take you on a journey through emotions and musical styles.<br>
+
+Their songs are like a rollercoaster of feelings.<br>
+
+BIGBANGs music is really special.<br>
+
+It covers a lot of styles from happy to sad and everything in, between.<br>
+
+BIGBANG has made music that people will always remember.
+    </p>
+
+    <div class="disco-track reveal delay-2">
+      <div class="album-card">
+        <div class="album-art"><div class="album-art-inner album-bg-1"><div class="album-art-text">BIGBANG</div></div><div class="album-shine"></div><div class="album-overlay"><span class="album-overlay-text">View Album</span></div></div>
+        <div class="album-glow"></div>
+        <div class="album-info">
+          <div class="album-year">2006</div>
+          <div class="album-title">BIGBANG</div>
+          <div class="album-desc">This album was the start of something. It was really bold and raw. The music was very different from the K-Pop music that was out at the time.<br>
+
+The K-Pop scene was not used to the K-Pop music that this album brought. The K-Pop debut EP was a deal for K-Pop. It changed the K-Pop music scene. The K-Pop debut EP was really important, for K-Pop.</div>
+        </div>
+      </div>
+      <div class="album-card">
+        <div class="album-art"><div class="album-art-inner album-bg-2"><div class="album-art-text">ALIVE</div></div><div class="album-shine"></div><div class="album-overlay"><span class="album-overlay-text">View Album</span></div></div>
+        <div class="album-glow"></div>
+        <div class="album-info">
+          <div class="album-year">2012</div>
+          <div class="album-title">ALIVE</div>
+          <div class="album-desc">I love Fantastic Baby, Bad Boy and Blue. These songs are really great.<br>
+
+Fantastic Baby, Boy and Blue are, from one mini-album.<br>
+
+The record is just perfect.<br>
+
+I think Fantastic Baby Boy and Blue are the best songs.</div>
+        </div>
+      </div>
+      <div class="album-card">
+        <div class="album-art"><div class="album-art-inner album-bg-3"><div class="album-art-text">MADE</div></div><div class="album-shine"></div><div class="album-overlay"><span class="album-overlay-text">View Album</span></div></div>
+        <div class="album-glow"></div>
+        <div class="album-info">
+          <div class="album-year">2016</div>
+          <div class="album-title">MADE</div>
+          <div class="album-desc">I really like this song called Loser, Bang Bang Bang We Like 2 Party. It was very popular. Did great, on the music charts. The song Loser, Bang Bang Bang We Like 2 Party was a hit. People loved the song Loser, Bang Bang Bang We Like 2 Party. The song Loser, Bang Bang Bang We Like 2 Party is something that people enjoy listening to all the time.</div>
+        </div>
+      </div>
+      <div class="album-card">
+        <div class="album-art"><div class="album-art-inner album-bg-4"><div class="album-art-text">STILL ALIVE</div></div><div class="album-shine"></div><div class="album-overlay"><span class="album-overlay-text">View Album</span></div></div>
+        <div class="album-glow"></div>
+        <div class="album-info">
+          <div class="album-year">2012</div>
+          <div class="album-title">STILL ALIVE</div>
+          <div class="album-desc">The new version of this thing is really cool. It made the ALIVE era a lot more interesting. The ALIVE era had some ideas and it affected people all around the world.<br>
+
+This new version of the ALIVE era was very important to the ALIVE era. The ALIVE era is a deal and this new version had a big impact, on the ALIVE era globally.</div>
+        </div>
+      </div>
+      <div class="album-card">
+        <div class="album-art"><div class="album-art-inner album-bg-5"><div class="album-art-text">Haru Haru</div></div><div class="album-shine"></div><div class="album-overlay"><span class="album-overlay-text">View Album</span></div></div>
+        <div class="album-glow"></div>
+        <div class="album-info">
+          <div class="album-year">2008</div>
+          <div class="album-title">Stand Up</div>
+          <div class="album-desc">Containing the Haru Haru. A ballad that is one of the best K-Pop songs ever.<br>
+
+It is really great.<br>
+
+The song Haru Haru is still loved by people.<br>
+
+K-Pop fans think Haru Haru is amazing.<br>
+
+The Haru Haru ballad remains a K-Pop song.</div>
+        </div>
+      </div>
+      <div class="album-card">
+        <div class="album-art"><div class="album-art-inner album-bg-6"><div class="album-art-text">FXXK IT</div></div><div class="album-shine"></div><div class="album-overlay"><span class="album-overlay-text">View Album</span></div></div>
+        <div class="album-glow"></div>
+        <div class="album-info">
+          <div class="album-year">2016</div>
+          <div class="album-title">LAST DANCE</div>
+          <div class="album-desc">This year was really something it was sad and happy at the same time. FXXK IT and Last Dance were the songs that really stood out to me in 2016. FXXK IT and Last Dance were everywhere, in 2016. They made me feel so many emotions. I think FXXK IT and Last Dance are the reasons why 2016 was such a year.</div>
+        </div>
+      </div>
+    </div>
+    <p class="disco-hint reveal delay-3">Drag to browse the catalog</p>
+  </div>
+</section>
+
+<!-- ============================================================
+     TIMELINE
+     ============================================================ -->
+<section id="timeline" class="section" aria-label="BIGBANG Timeline">
+  <p class="section-label reveal" style="justify-content:center; text-align:center;">The Journey</p>
+  <h2 class="section-title reveal delay-1" style="text-align:center; margin-bottom: 80px;">A Decade of History</h2>
+
+  <div class="timeline-inner">
+    <div class="timeline-line"><div class="timeline-line-fill" id="timeline-fill"></div></div>
+    <div class="timeline-items">
+
+      <div class="timeline-item right reveal">
+        <div class="timeline-content-left"></div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right">
+          <div class="timeline-year">2006</div>
+          <div class="timeline-event-title">BIGBANG Debut</div>
+          <div class="timeline-event-desc">Five young artists have just started with YG Entertainment. They are already doing something different. They have a sound that's hip-hop and it is full of energy. These artists are really young. They are performing with a lot of enthusiasm. The music of these five artists is hip-hop. It has a lot of raw energy. Five young artists, at YG Entertainment are bringing a sound.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item left reveal delay-1">
+        <div class="timeline-content-left">
+          <div class="timeline-year">2008</div>
+          <div class="timeline-event-title">Haru Haru Era</div>
+          <div class="timeline-event-desc">The release of Stand Up and the famous song Haru Haru shows that BIGBANG is more, than just performers. They are actually storytellers. BIGBANG becomes a group that can tell us stories through their music. The songs Stand Up. Haru Haru are a big part of this. BIGBANG is not a group that performs on stage they are BIGBANG, the storytellers.</div>
+        </div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right"></div>
+      </div>
+
+      <div class="timeline-item right reveal delay-2">
+        <div class="timeline-content-left"></div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right">
+          <div class="timeline-year">2011</div>
+          <div class="timeline-event-title">Japan Conquest</div>
+          <div class="timeline-event-desc">BIGBANG is really big in Japan. They sell out these venues called domes. This is a deal because no other K-Pop group has done what BIGBANG has done. BIGBANG has become a superstar in Japan, which's something that not many K-Pop groups can say. They are actually famous in the J-Pop world now which is an achievement, for BIGBANG.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item left reveal delay-1">
+        <div class="timeline-content-left">
+          <div class="timeline-year">2012</div>
+          <div class="timeline-event-title">ALIVE Galaxy Tour</div>
+          <div class="timeline-event-desc">The ALIVE mini-album and its tour made a lot of money, over $100 million. The song Fantastic Baby became really popular around the world. This changed K-Pop forever the K-Pop scene will never be the same because of the ALIVE mini-album and Fantastic Baby.</div>
+        </div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right"></div>
+      </div>
+
+      <div class="timeline-item right reveal delay-2">
+        <div class="timeline-content-left"></div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right">
+          <div class="timeline-year">2015</div>
+          <div class="timeline-event-title">MADE Series</div>
+          <div class="timeline-event-desc">A single-release strategy made an impact. It produced hits like Loser, Bae Bae and Bang Bang Bang. Each song was a number one hit. Every release was an event.
+
+The strategy worked well for the songs Loser, Bae Bae, Bang Bang Bang. They all became number one hits.
+
+This approach made every song release an event, like Loser, Bae Bae and Bang Bang Bang.</div>
+        </div>
+      </div>
+
+      <div class="timeline-item left reveal delay-1">
+        <div class="timeline-content-left">
+          <div class="timeline-year">2016</div>
+          <div class="timeline-event-title">MADE Full Album</div>
+          <div class="timeline-event-desc">This is their big album, in Korean. People think it is really great. The songs FXXK IT and Last Dance become very famous and important before they have to go to the military.</div>
+        </div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right"></div>
+      </div>
+
+      <div class="timeline-item right reveal delay-2">
+        <div class="timeline-content-left"></div>
+        <div class="timeline-node"><div class="timeline-dot"></div></div>
+        <div class="timeline-content-right">
+          <div class="timeline-year">2022</div>
+          <div class="timeline-event-title">Still Life</div>
+          <div class="timeline-event-desc">After years of serving in the military and waiting BIGBANG is back with their song "Still Life".
+
+It is a mix of sweet feelings
+
+and shows that BIGBANG still has a strong presence in the music world.
+
+The song " Life" seems like an anthem
+
+that has a more grown-up feel, to it.
+
+BIGBANGs power is still much there.</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     GALLERY
+     ============================================================ -->
+<section id="gallery" class="section" aria-label="Gallery">
+  <div class="gallery-inner">
+    <p class="section-label reveal">Gallery</p>
+    <h2 class="section-title reveal delay-1">Moments & Memory</h2>
+
+    <div class="gallery-grid reveal delay-2">
+      <div class="gallery-item">
+        <div class="gallery-placeholder g1" style="min-height:360px;">빅뱅</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g2">G</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g3" style="min-height:360px;">T</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g4">D</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g5">T</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g6" style="min-height:360px;">VIP</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g7">MADE</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+      <div class="gallery-item">
+        <div class="gallery-placeholder g8">ALIVE</div>
+        <div class="gallery-item-overlay"><span class="gallery-overlay-icon">✦</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     AMY MESSAGE
+     ============================================================ -->
+<section id="amy" aria-label="For Amy">
+  <div class="amy-particles" aria-hidden="true" id="amy-particles"></div>
+
+  <div class="amy-inner">
+    <div class="amy-card reveal">
+      <div class="amy-hearts" id="amy-hearts">
+        <span class="heart">♥</span>
+        <span class="heart">♥</span>
+        <span class="heart">♥</span>
+        <span class="heart">♥</span>
+        <span class="heart">♥</span>
+      </div>
+
+      <p class="amy-label">A Gift</p>
+      <h2 class="amy-title">For <em>Amy</em>,<br>with love</h2>
+
+      <p class="amy-message">
+        This page is for people who love BIGBANG. It is for you because you really love BIGBANG. I made this page for you. Cus wanted to give you something that feels really special. This is because BIGBANG is a special group.
+
+G-Dragon is very creative. Taeyang has a lot of soul. Daesung is a warm person. T.O.P has a vision. All of these things are what make BIGBANGs music so great. BIGBANGs music matters because of these things. The music of BIGBANG matters because it is about you and what you feel. It is about why BIGBANG's so important, to you.
+      </p>
+
+      <p class="amy-message">
+        May this be a celebration of everything that brings you happiness. Keep loving what you love with all your heart. Don't be sorry about it. The world is a place because of fans, like you. The ones who really feel the music and love it.
+      </p>
+
+      <p class="amy-signature">With admiration, always 💖</p>
+
+      <button class="amy-send-love" id="send-love-btn" type="button">Send some love ♥</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer id="footer" aria-label="Footer">
+  <div class="footer-inner">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <div class="footer-logo">BIG<span>BANG</span></div>
+        <p class="footer-tagline">An interactive tribute to one of music's most enduring and influential acts. Made with love for Amy.</p>
+      </div>
+      <div>
+        <div class="footer-col-title">Members</div>
+        <ul class="footer-links">
+          <li><a href="#gdragon">G-Dragon</a></li>
+          <li><a href="#taeyang">Taeyang</a></li>
+          <li><a href="#daesung">Daesung</a></li>
+          <li><a href="#top-section">T.O.P</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">Explore</div>
+        <ul class="footer-links">
+          <li><a href="#intro">Introduction</a></li>
+          <li><a href="#legacy">Legacy</a></li>
+          <li><a href="#hallyu">Hallyu Wave</a></li>
+          <li><a href="#discography">Discography</a></li>
+          <li><a href="#timeline">Timeline</a></li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-col-title">More</div>
+        <ul class="footer-links">
+          <li><a href="#fandom">Fandom Culture</a></li>
+          <li><a href="#gallery">Gallery</a></li>
+          <li><a href="#quote-section">Quotes</a></li>
+          <li><a href="#amy">For Amy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p class="footer-copy">© 2024, BIGBANG Tribute. Made with ♥ for Amy. All rights belong to their respective owners.</p>
+      <button class="footer-back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">
+        <span class="footer-back-icon">↑</span>
+        <span>Top</span>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT
+     ============================================================ -->
+<script>
+/* ============================================================
+   HEART INTRO — "I LOVE YOU" HEART ANIMATION
+   ============================================================ */
+(function heartIntro() {
+  const stage = document.getElementById('heart-intro-stage');
+  const introEl = document.getElementById('heart-intro');
+  if (!stage || !introEl) return;
+
+  // Sample points inside a heart shape using canvas + Path2D
+  const SIZE = 400;
+  const canvas = document.createElement('canvas');
+  canvas.width = SIZE; canvas.height = SIZE;
+  const ctx = canvas.getContext('2d');
+  const heartPath = new Path2D('M200,120 C200,60 140,20 90,50 C40,80 30,150 90,210 C130,250 170,280 200,320 C230,280 270,250 310,210 C370,150 360,80 310,50 C260,20 200,60 200,120 Z');
+
+  const points = [];
+  let attempts = 0;
+  while (points.length < 70 && attempts < 5000) {
+    attempts++;
+    const x = Math.random() * SIZE;
+    const y = Math.random() * (SIZE * 0.85) + SIZE * 0.05;
+    if (ctx.isPointInPath(heartPath, x, y)) {
+      // thin out points too close to the very center so the "I love you" caption stays readable
+      const dx = x - SIZE / 2, dy = y - (SIZE * 0.46);
+      const distFromCenter = Math.sqrt(dx * dx + dy * dy);
+      if (distFromCenter > 55 || Math.random() < 0.25) {
+        points.push({ x, y });
+      }
+    }
+  }
+
+  points.forEach((pt) => {
+    const word = document.createElement('span');
+    word.className = 'heart-word';
+    word.textContent = 'I love you';
+    word.style.left = (pt.x / SIZE * 100) + '%';
+    word.style.top = (pt.y / SIZE * 100) + '%';
+    const scale = 0.55 + Math.random() * 0.55;
+    word.style.fontSize = (10 * scale) + 'px';
+    word.style.transform = `translate(-50%, -50%) rotate(${(Math.random() * 16 - 8)}deg)`;
+    word.style.animationDuration = (2.4 + Math.random() * 2.4) + 's';
+    word.style.animationDelay = (Math.random() * 2.5) + 's';
+    stage.appendChild(word);
+  });
+
+  const TOTAL_DURATION = 5200;
+  setTimeout(() => {
+    introEl.classList.add('done');
+    introEl.addEventListener('transitionend', function onEnd(e) {
+      if (e.propertyName === 'opacity') {
+        introEl.style.display = 'none';
+        introEl.removeEventListener('transitionend', onEnd);
+      }
+    });
+    document.dispatchEvent(new Event('heartIntroDone'));
+  }, TOTAL_DURATION);
+})();
+
+/* ============================================================
+   PRELOADER — waits for both the page load and the heart intro
+   ============================================================ */
+(function preloaderSequence() {
+  const pre = document.getElementById('preloader');
+  let windowLoaded = false;
+  let heartDone = false;
+  function tryFinish() {
+    if (windowLoaded && heartDone) {
+      setTimeout(() => { pre.classList.add('done'); }, 900);
+    }
+  }
+  window.addEventListener('load', () => { windowLoaded = true; tryFinish(); });
+  document.addEventListener('heartIntroDone', () => { heartDone = true; tryFinish(); });
+})();
+
+/* ============================================================
+   HERO TITLE LETTER SPLIT
+   ============================================================ */
+(function splitHeroTitle() {
+  const el = document.getElementById('hero-title-text');
+  if (!el) return;
+  const html = el.innerHTML;
+  const parts = html.split('<br>');
+  let delay = 0;
+  const wrapWord = (word, extraClass) => {
+    return word.split('').map(ch => {
+      const span = ch === ' ' ? '&nbsp;' : ch;
+      delay += 0.04;
+      return `<span class="letter ${extraClass || ''}" style="animation-delay:${(0.6 + delay).toFixed(2)}s">${span}</span>`;
+    }).join('');
+  };
+  // Rebuild: first part plain "BIG", second part wrapped in outline span already
+  const first = parts[0]; // "BIG"
+  const secondRaw = parts[1] || '';
+  const secondMatch = secondRaw.match(/<span class="outline">(.*?)<\/span>/);
+  let rebuilt = wrapWord(first) + '<br>';
+  if (secondMatch) {
+    rebuilt += `<span class="outline">${wrapWord(secondMatch[1])}</span>`;
+  } else {
+    rebuilt += wrapWord(secondRaw);
+  }
+  el.innerHTML = rebuilt;
+})();
+
+/* ============================================================
+   CURSOR
+   ============================================================ */
+const cursor = document.getElementById('cursor');
+const cursorRing = document.getElementById('cursor-ring');
+const cursorTrail = document.getElementById('cursor-trail');
+let mouseX = -100, mouseY = -100;
+let ringX = -100, ringY = -100;
+let trailX = -100, trailY = -100;
+
+document.addEventListener('mousemove', e => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+  cursor.style.left = mouseX + 'px';
+  cursor.style.top = mouseY + 'px';
+});
+
+function animateRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
+  cursorRing.style.left = ringX + 'px';
+  cursorRing.style.top = ringY + 'px';
+
+  trailX += (mouseX - trailX) * 0.06;
+  trailY += (mouseY - trailY) * 0.06;
+  cursorTrail.style.left = trailX + 'px';
+  cursorTrail.style.top = trailY + 'px';
+
+  requestAnimationFrame(animateRing);
+}
+animateRing();
+
+document.querySelectorAll('a, button, .album-card, .member-preview, .gallery-item, .legacy-card, .hallyu-card, .lightstick-row').forEach(el => {
+  el.addEventListener('mouseenter', () => {
+    cursor.style.width = '6px';
+    cursor.style.height = '6px';
+    cursorRing.style.width = '60px';
+    cursorRing.style.height = '60px';
+    cursorRing.style.borderColor = 'rgba(201,168,76,0.7)';
+  });
+  el.addEventListener('mouseleave', () => {
+    cursor.style.width = '12px';
+    cursor.style.height = '12px';
+    cursorRing.style.width = '40px';
+    cursorRing.style.height = '40px';
+    cursorRing.style.borderColor = 'rgba(201,168,76,0.5)';
+  });
+});
+
+/* ============================================================
+   NAVIGATION
+   ============================================================ */
+const nav = document.getElementById('nav');
+const navProgress = document.getElementById('nav-progress');
+const navLinks = document.querySelectorAll('.nav-links a');
+const ringFg = document.getElementById('ring-fg');
+const ringWrap = document.getElementById('progress-ring-wrap');
+const RING_R = 25;
+const RING_CIRC = 2 * Math.PI * RING_R;
+if (ringFg) {
+  ringFg.style.strokeDasharray = RING_CIRC;
+  ringFg.style.strokeDashoffset = RING_CIRC;
+}
+
+let lastScrollY = 0;
+let scrollTicking = false;
+
+window.addEventListener('scroll', () => {
+  if (!scrollTicking) {
+    requestAnimationFrame(updateNav);
+    scrollTicking = true;
+  }
+}, { passive: true });
+
+function updateNav() {
+  const scrollY = window.scrollY;
+  const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = Math.min(100, (scrollY / maxScroll) * 100);
+  navProgress.style.width = progress + '%';
+
+  if (ringFg) {
+    const offset = RING_CIRC - (progress / 100) * RING_CIRC;
+    ringFg.style.strokeDashoffset = offset;
+  }
+  if (ringWrap) {
+    ringWrap.classList.toggle('visible', scrollY > 500);
+  }
+
+  if (scrollY > 80) {
+    nav.classList.add('scrolled');
+  } else {
+    nav.classList.remove('scrolled');
+  }
+
+  if (scrollY > lastScrollY + 10 && scrollY > 300) {
+    nav.classList.add('hide');
+  } else if (scrollY < lastScrollY - 5) {
+    nav.classList.remove('hide');
+  }
+  lastScrollY = scrollY;
+  scrollTicking = false;
+
+  // Timeline fill
+  const timelineInner = document.querySelector('.timeline-inner');
+  const timelineFill = document.getElementById('timeline-fill');
+  if (timelineInner && timelineFill) {
+    const rect = timelineInner.getBoundingClientRect();
+    const vh = window.innerHeight;
+    const total = rect.height;
+    const visibleStart = vh * 0.75;
+    let filled = visibleStart - rect.top;
+    filled = Math.max(0, Math.min(total, filled));
+    timelineFill.style.height = (filled / total * 100) + '%';
+  }
+}
+
+/* Active nav detection */
+const sections = document.querySelectorAll('section[id], footer[id]');
+const observerNav = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id;
+      navLinks.forEach(link => {
+        link.classList.toggle('active', link.getAttribute('href') === '#' + id);
+      });
+    }
+  });
+}, { threshold: 0.3 });
+sections.forEach(s => observerNav.observe(s));
+
+/* ============================================================
+   HERO CANVAS — PARTICLES
+   ============================================================ */
+const canvas = document.getElementById('hero-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let heroMouseX = 0, heroMouseY = 0;
+
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+
+class Particle {
+  constructor() { this.reset(); }
+  reset() {
+    this.x = Math.random() * canvas.width;
+    this.y = Math.random() * canvas.height;
+    this.size = Math.random() * 1.5 + 0.3;
+    this.speedX = (Math.random() - 0.5) * 0.3;
+    this.speedY = (Math.random() - 0.5) * 0.3 - 0.1;
+    this.opacity = Math.random() * 0.4 + 0.1;
+    this.life = 1;
+    this.decay = Math.random() * 0.002 + 0.001;
+    const r = Math.random();
+    if (r < 0.5) { this.color = `rgba(201,168,76,${this.opacity})`; }
+    else if (r < 0.8) { this.color = `rgba(42,92,255,${this.opacity * 0.6})`; }
+    else { this.color = `rgba(255,255,255,${this.opacity * 0.3})`; }
+  }
+  update() {
+    const dx = heroMouseX - this.x;
+    const dy = heroMouseY - this.y;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    if (dist < 150) {
+      const force = (150 - dist) / 150 * 0.5;
+      this.speedX += (dx / dist) * force * 0.02;
+      this.speedY += (dy / dist) * force * 0.02;
+    }
+    this.x += this.speedX;
+    this.y += this.speedY;
+    this.speedX *= 0.99;
+    this.speedY *= 0.99;
+    this.life -= this.decay;
+    if (this.life <= 0 || this.x < -10 || this.x > canvas.width + 10 || this.y < -50) this.reset();
+  }
+  draw() {
+    ctx.save();
+    ctx.globalAlpha = this.life * 0.6;
+    ctx.fillStyle = this.color;
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+  }
+}
+
+function initParticles() {
+  particles = [];
+  for (let i = 0; i < 120; i++) particles.push(new Particle());
+}
+initParticles();
+
+document.getElementById('hero').addEventListener('mousemove', e => {
+  heroMouseX = e.clientX;
+  heroMouseY = e.clientY;
+});
+
+function animateParticles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  particles.forEach(p => { p.update(); p.draw(); });
+  requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  initParticles();
+}, { passive: true });
+
+/* ============================================================
+   HERO PARALLAX
+   ============================================================ */
+const heroContent = document.querySelector('.hero-content');
+const heroShapes = document.querySelectorAll('.hero-shape');
+const lensFlare = document.querySelector('.lens-flare');
+
+document.addEventListener('mousemove', e => {
+  const cx = window.innerWidth / 2;
+  const cy = window.innerHeight / 2;
+  const dx = (e.clientX - cx) / cx;
+  const dy = (e.clientY - cy) / cy;
+
+  if (heroContent) {
+    heroContent.style.transform = `translate(${dx * -8}px, ${dy * -8}px)`;
+  }
+  heroShapes.forEach((shape, i) => {
+    const depth = (i + 1) * 6;
+    shape.style.transform = `translate(${dx * depth}px, ${dy * depth}px)`;
+  });
+  if (lensFlare) {
+    lensFlare.style.transform = `translate(${dx * -20}px, ${dy * -20}px)`;
+  }
+});
+
+/* Magnetic CTA button */
+document.querySelectorAll('.hero-cta').forEach(btn => {
+  btn.addEventListener('mousemove', e => {
+    const rect = btn.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+    btn.style.transform = `translate(${x * 0.25}px, ${y * 0.25}px)`;
+  });
+  btn.addEventListener('mouseleave', () => { btn.style.transform = ''; });
+});
+
+/* ============================================================
+   SCROLL REVEAL (Intersection Observer)
+   ============================================================ */
+const revealEls = document.querySelectorAll('.reveal, .reveal-left, .reveal-right, .reveal-scale');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -60px 0px' });
+revealEls.forEach(el => revealObserver.observe(el));
+
+/* ============================================================
+   COUNTERS
+   ============================================================ */
+const counters = document.querySelectorAll('.counter');
+const counterObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.counted) {
+      entry.target.dataset.counted = true;
+      const target = +entry.target.dataset.target;
+      const duration = 2000;
+      const start = performance.now();
+      function step(now) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 4);
+        entry.target.textContent = Math.round(eased * target);
+        if (progress < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+  });
+}, { threshold: 0.5 });
+counters.forEach(c => counterObserver.observe(c));
+
+/* ============================================================
+   SKILL BARS
+   ============================================================ */
+const skillFills = document.querySelectorAll('.skill-bar-fill');
+const skillObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting && !entry.target.dataset.animated) {
+      entry.target.dataset.animated = true;
+      const width = entry.target.dataset.width;
+      setTimeout(() => { entry.target.style.width = width + '%'; }, 200);
+    }
+  });
+}, { threshold: 0.5 });
+skillFills.forEach(f => skillObserver.observe(f));
+
+/* ============================================================
+   CARD TILT (3D)
+   ============================================================ */
+function addTilt(selector) {
+  document.querySelectorAll(selector).forEach(card => {
+    card.addEventListener('mousemove', e => {
+      const rect = card.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const rx = (e.clientY - cy) / (rect.height / 2) * -8;
+      const ry = (e.clientX - cx) / (rect.width / 2) * 8;
+      card.style.transform = `perspective(800px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+    });
+    card.addEventListener('mouseleave', () => {
+      card.style.transform = '';
+    });
+  });
+}
+addTilt('.album-card');
+addTilt('.legacy-card');
+addTilt('.hallyu-card');
+
+/* ============================================================
+   AMY PARTICLES
+   ============================================================ */
+const amyParticlesContainer = document.getElementById('amy-particles');
+for (let i = 0; i < 20; i++) {
+  const p = document.createElement('div');
+  p.className = 'amy-particle';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.top = Math.random() * 100 + '%';
+  p.style.animationDelay = Math.random() * 4 + 's';
+  p.style.animationDuration = (Math.random() * 3 + 3) + 's';
+  p.style.background = Math.random() > 0.5 ? 'var(--rose)' : 'var(--gold)';
+  amyParticlesContainer.appendChild(p);
+}
+
+/* Send-love heart burst */
+const sendLoveBtn = document.getElementById('send-love-btn');
+if (sendLoveBtn) {
+  sendLoveBtn.addEventListener('click', (e) => {
+    const rect = sendLoveBtn.getBoundingClientRect();
+    for (let i = 0; i < 12; i++) {
+      const h = document.createElement('div');
+      h.className = 'burst-heart';
+      h.textContent = Math.random() > 0.5 ? '♥' : '✦';
+      h.style.left = (rect.left + rect.width / 2) + 'px';
+      h.style.top = rect.top + 'px';
+      h.style.color = Math.random() > 0.5 ? 'var(--rose)' : 'var(--gold)';
+      h.style.setProperty('--dx', ((Math.random() - 0.5) * 200) + 'px');
+      h.style.setProperty('--rot', (Math.random() * 360) + 'deg');
+      document.body.appendChild(h);
+      setTimeout(() => h.remove(), 1500);
+    }
+  });
+}
+
+document.querySelectorAll('.heart').forEach(h => {
+  h.addEventListener('click', (e) => {
+    const rect = h.getBoundingClientRect();
+    const burst = document.createElement('div');
+    burst.className = 'burst-heart';
+    burst.textContent = '♥';
+    burst.style.left = (rect.left + rect.width / 2) + 'px';
+    burst.style.top = rect.top + 'px';
+    burst.style.color = 'var(--rose)';
+    burst.style.setProperty('--dx', ((Math.random() - 0.5) * 100) + 'px');
+    burst.style.setProperty('--rot', (Math.random() * 200 - 100) + 'deg');
+    document.body.appendChild(burst);
+    setTimeout(() => burst.remove(), 1500);
+  });
+});
+
+/* ============================================================
+   SCROLL-DRIVEN BACKGROUND PARALLAX
+   ============================================================ */
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  const heroBg = document.querySelector('.hero-bg');
+  if (heroBg) {
+    heroBg.style.transform = `translateY(${scrollY * 0.3}px)`;
+  }
+}, { passive: true });
+
+/* ============================================================
+   MOBILE HAMBURGER
+   ============================================================ */
+const hamburger = document.querySelector('.nav-hamburger');
+const navLinksEl = document.querySelector('.nav-links');
+hamburger.addEventListener('click', () => {
+  const isOpen = navLinksEl.style.display === 'flex';
+  navLinksEl.style.display = isOpen ? '' : 'flex';
+  navLinksEl.style.flexDirection = 'column';
+  navLinksEl.style.position = 'absolute';
+  navLinksEl.style.top = '72px';
+  navLinksEl.style.left = '0';
+  navLinksEl.style.right = '0';
+  navLinksEl.style.background = 'rgba(5,5,5,0.95)';
+  navLinksEl.style.padding = '24px';
+  navLinksEl.style.backdropFilter = 'blur(20px)';
+  navLinksEl.style.borderBottom = '1px solid rgba(201,168,76,0.1)';
+});
+
+/* Close mobile menu on link click */
+document.querySelectorAll('.nav-links a').forEach(a => {
+  a.addEventListener('click', () => {
+    if (window.innerWidth <= 768) {
+      navLinksEl.style.display = '';
+    }
+  });
+});
+
+/* ============================================================
+   SMOOTH ANCHOR SCROLL
+   ============================================================ */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', e => {
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+/* ============================================================
+   RIPPLE EFFECT on buttons
+   ============================================================ */
+document.querySelectorAll('.hero-cta, .amy-send-love').forEach(btn => {
+  btn.addEventListener('click', function(e) {
+    const ripple = document.createElement('span');
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    ripple.style.cssText = `
+      position:absolute; border-radius:50%;
+      width:${size}px; height:${size}px;
+      left:${e.clientX - rect.left - size/2}px;
+      top:${e.clientY - rect.top - size/2}px;
+      background:rgba(255,255,255,0.2);
+      transform:scale(0); animation:rippleAnim 0.6s ease-out forwards;
+      pointer-events:none;
+    `;
+    const style = document.createElement('style');
+    style.textContent = `@keyframes rippleAnim { to { transform: scale(2.5); opacity: 0; } }`;
+    document.head.appendChild(style);
+    btn.style.position = 'relative';
+    btn.style.overflow = 'hidden';
+    btn.appendChild(ripple);
+    setTimeout(() => ripple.remove(), 700);
+  });
+});
+
+/* ============================================================
+   DISCO TRACK DRAG SCROLL
+   ============================================================ */
+const discoTrack = document.querySelector('.disco-track');
+if (discoTrack) {
+  let isDragging = false, startX, scrollLeftStart;
+  discoTrack.addEventListener('mousedown', e => {
+    isDragging = true;
+    startX = e.pageX - discoTrack.offsetLeft;
+    scrollLeftStart = discoTrack.scrollLeft;
+    discoTrack.style.cursor = 'grabbing';
+  });
+  window.addEventListener('mouseup', () => {
+    isDragging = false;
+    discoTrack.style.cursor = 'grab';
+  });
+  discoTrack.addEventListener('mousemove', e => {
+    if (!isDragging) return;
+    e.preventDefault();
+    const x = e.pageX - discoTrack.offsetLeft;
+    discoTrack.scrollLeft = scrollLeftStart - (x - startX);
+  });
+  discoTrack.style.cursor = 'grab';
+}
+
+console.log('%c♥ BIGBANG, A Gift for Amy ♥', 'color: #c9a84c; font-size: 16px; font-family: Georgia; padding: 8px;');
+</script>
+</body>
+</html>
