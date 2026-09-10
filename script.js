@@ -185,10 +185,10 @@
     var defaultCheckText = checkText ? checkText.textContent : "";
 
     var wishes = [
-      "Wish sent — the sky is keeping it safe for you.",
-      "Noted, quietly, by the nearest star.",
-      "That one's already on its way.",
-      "Granted. Probably. The universe is a little slow sometimes."
+      "Wish sent, the sky keeps it for you now.",
+      "Noted, by the nearest star.",
+      "That one's already on its way, you'll just have to be patient.",
+      "Granted. Probably, but the universe is a little slow sometimes."
     ];
 
     function goToStep(n) {
@@ -217,7 +217,7 @@
     // Step 2, "not yet" -> gently send her back to actually make the wish first.
     if (noBtn && checkText) {
       noBtn.addEventListener("click", function () {
-        checkText.textContent = "Take a second, close your eyes, then press it again.";
+        checkText.textContent = "Take a second, close your eyes, then press it again. (Also, go goon, at least u clear ur mind for a fully focused wish after <3, Anyways.)";
         setTimeout(function () {
           goToStep(0);
         }, 1600);
