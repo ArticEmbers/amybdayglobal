@@ -714,8 +714,6 @@
 }
 
 
-</style>
-
 /* ============================================================
    DESIGN TOKENS
    ============================================================ */
@@ -1692,3 +1690,6 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
   align-items: center;
   gap: 12px;
 }
+
+
+</style>
