@@ -1691,5 +1691,8 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
   gap: 12px;
 }
 
+.wish-check {
+  white-space: pre-line;
+}
 
 </style>
