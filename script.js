@@ -217,7 +217,7 @@
     // Step 2, "not yet" -> gently send her back to actually make the wish first.
     if (noBtn && checkText) {
       noBtn.addEventListener("click", function () {
-        checkText.textContent = "Take a second, close your eyes, then press it again. (Also, go goon, at least u clear ur mind for a fully focused wish after <3, Anyways.)";
+        checkText.textContent = "Take a second, close your eyes, then press it again.\n\n(Also, go goon, at least u clear ur mind for a fully focused wish after <3, Anyways.)";
         setTimeout(function () {
           goToStep(0);
         }, 1600);
