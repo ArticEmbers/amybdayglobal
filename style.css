@@ -936,23 +936,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
 .nav-logo span { color: var(--gold); font-style: normal; }
 
 .nav-message,
-.nav-back,
-.nav-hub {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--star);
-  text-decoration: none;
-  padding: 11px 26px;
-  border-radius: 100px;
-  border: 1px solid rgba(255,255,255,0.16);
-  overflow: hidden;
-  transition: border-color 0.35s, transform 0.35s var(--ease-out);
-}
+.nav-back {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -970,8 +954,7 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
 }
 
 .nav-message::before,
-.nav-back::before,
-.nav-hub::before {
+.nav-back::before {
   content: '';
   position: absolute;
   inset: 0;
@@ -982,16 +965,12 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
 }
 
 .nav-message:hover,
-.nav-back:hover,
-.nav-hub:hover {
+.nav-back:hover {
   border-color: transparent;
   transform: translateY(-1px);
 }
 .nav-message:hover::before,
-.nav-back:hover::before,
-.nav-hub:hover::before {
-  opacity: 1;
-}
+.nav-back:hover::before { opacity: 1; }
 
 /* ============================================================
    HERO
@@ -1463,18 +1442,25 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
    LETTER PAGE (message.html)
    ============================================================ */
 .letter-wrap {
-  width: 100%;
+  position: relative;
+  z-index: 2;
+  min-height: 100vh;
   display: flex;
+  align-items: center;
   justify-content: center;
-  align-items: flex-start;
-  box-sizing: border-box;
-  padding: 80px 24px;
+  padding: calc(var(--nav-h) + 60px) 24px 100px;
 }
 
 .letter-card {
-  width: min(620px, 100%);
-  margin: 0 auto;
-  box-sizing: border-box;
+  max-width: 620px;
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  border-radius: 22px;
+  padding: clamp(40px, 6vw, 72px) clamp(28px, 6vw, 64px);
+  backdrop-filter: blur(18px);
+  position: relative;
+  box-shadow: 0 30px 90px rgba(0,0,0,0.4);
 }
 
 .letter-seal {
@@ -1587,107 +1573,5 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
     opacity: 1 !important; transform: none !important; filter: none !important;
   }
   .reveal, .reveal-scale { opacity: 1 !important; transform: none !important; filter: none !important; }
-}
-
-/* ============================================================
-   HUB NAVIGATION
-   ============================================================ */
-
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.nav-hub {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-
-  font-family: var(--font-ui);
-  font-size: 13px;
-  font-weight: 500;
-
-  color: var(--star);
-  text-decoration: none;
-
-  padding: 11px 20px;
-  border-radius: 100px;
-
-  border: 1px solid rgba(201,168,76,0.28);
-
-  overflow: hidden;
-
-  transition:
-    border-color 0.35s,
-    transform 0.35s var(--ease-out),
-    color 0.35s;
-}
-
-.nav-hub::before {
-  content: '✦';
-
-  color: var(--gold);
-
-  transition:
-    transform 0.4s var(--spring),
-    color 0.35s;
-}
-
-.nav-hub::after {
-  content: '';
-
-  position: absolute;
-  inset: 0;
-
-  background: var(--gradient-signature);
-
-  opacity: 0;
-
-  transition: opacity 0.4s;
-
-  z-index: -1;
-}
-
-.nav-hub:hover {
-  border-color: transparent;
-  transform: translateY(-1px);
-}
-
-.nav-hub:hover::before {
-  color: var(--star);
-  transform: rotate(90deg) scale(1.15);
-}
-
-.nav-hub:hover::after {
-  opacity: 1;
-}
-
-
-/* Mobile */
-
-@media (max-width: 640px) {
-  .nav-actions {
-    gap: 7px;
-  }
-
-  .nav-hub,
-  .nav-message {
-    padding: 9px 14px;
-    font-size: 12px;
-  }
-}
-.nav-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.wish-check {
-  white-space: pre-line;
-}
-
--sizing: border-box;
 }
 </style>
