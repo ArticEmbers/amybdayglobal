@@ -1463,25 +1463,18 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
    LETTER PAGE (message.html)
    ============================================================ */
 .letter-wrap {
-  position: relative;
-  z-index: 2;
-  min-height: 100vh;
+  width: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-  padding: calc(var(--nav-h) + 60px) 24px 100px;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 80px 24px;
 }
 
 .letter-card {
-  max-width: 620px;
-  width: 100%;
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  border-radius: 22px;
-  padding: clamp(40px, 6vw, 72px) clamp(28px, 6vw, 64px);
-  backdrop-filter: blur(18px);
-  position: relative;
-  box-shadow: 0 30px 90px rgba(0,0,0,0.4);
+  width: min(620px, 100%);
+  margin: 0 auto;
+  box-sizing: border-box;
 }
 
 .letter-seal {
@@ -1695,18 +1688,6 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
   white-space: pre-line;
 }
 
-.letter-wrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  box-sizing: border-box;
-  padding: 80px 24px;
-}
-
-.letter-card {
-  width: min(620px, 100%);
-  margin: 0 auto;
-  box-sizing: border-box;
+-sizing: border-box;
 }
 </style>
