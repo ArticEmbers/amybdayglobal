@@ -89,7 +89,7 @@
       opacity: 0;
       animation: fadeInUp 1s ease 1.2s forwards;
     }
-
+    
     .intro-skip {
       margin-top: 2rem;
       background: transparent;
@@ -1695,4 +1695,18 @@ a:focus-visible, button:focus-visible { outline: 1px solid var(--gold); outline-
   white-space: pre-line;
 }
 
+.letter-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  box-sizing: border-box;
+  padding: 80px 24px;
+}
+
+.letter-card {
+  width: min(620px, 100%);
+  margin: 0 auto;
+  box-sizing: border-box;
+}
 </style>
