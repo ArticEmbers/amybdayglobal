@@ -281,48 +281,84 @@
      7. COUNTDOWN GATE — locks the page until Nov 14, 2026
      ------------------------------------------------------------ */
   function initCountdownGate() {
-    var gate = document.getElementById("countdown-gate");
-    if (!gate) return;
+  var gate = document.getElementById("countdown-gate");
+  if (!gate) return;
 
-    var target = new Date("2026-11-14T00:00:00");
-    document.body.classList.add("cg-locked");
+  var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var target = new Date("2026-11-14T00:00:00");
+  document.body.classList.add("cg-locked");
 
-    var daysEl = document.getElementById("cgDays");
-    var hoursEl = document.getElementById("cgHours");
-    var minsEl = document.getElementById("cgMins");
-    var secsEl = document.getElementById("cgSecs");
-
-    function reveal() {
-      gate.style.transition = "opacity .8s ease";
-      gate.style.opacity = "0";
-      setTimeout(function () {
-        gate.remove();
-        document.body.classList.remove("cg-locked");
-      }, 850);
+  // ambient particles
+  var pField = document.getElementById("cgParticles");
+  if (pField && !reduceMotion) {
+    var frag = document.createDocumentFragment();
+    var count = window.innerWidth < 640 ? 18 : 32;
+    for (var i = 0; i < count; i++) {
+      var p = document.createElement("span");
+      p.className = "cg-particle";
+      var size = (Math.random() * 2.5 + 1).toFixed(2);
+      p.style.width = size + "px";
+      p.style.height = size + "px";
+      p.style.left = (Math.random() * 100).toFixed(2) + "%";
+      p.style.top = (Math.random() * 100).toFixed(2) + "%";
+      p.style.setProperty("--cg-op", (Math.random() * 0.4 + 0.3).toFixed(2));
+      p.style.animationDuration = (Math.random() * 6 + 6).toFixed(2) + "s";
+      p.style.animationDelay = (Math.random() * 6).toFixed(2) + "s";
+      frag.appendChild(p);
     }
-
-    function tick() {
-      var diff = target - new Date();
-      if (diff <= 0) {
-        clearInterval(timer);
-        reveal();
-        return;
-      }
-      var d = Math.floor(diff / 86400000);
-      var h = Math.floor((diff % 86400000) / 3600000);
-      var m = Math.floor((diff % 3600000) / 60000);
-      var s = Math.floor((diff % 60000) / 1000);
-      if (daysEl) daysEl.textContent = String(d).padStart(2, "0");
-      if (hoursEl) hoursEl.textContent = String(h).padStart(2, "0");
-      if (minsEl) minsEl.textContent = String(m).padStart(2, "0");
-      if (secsEl) secsEl.textContent = String(s).padStart(2, "0");
-    }
-
-    tick();
-    var timer = setInterval(tick, 1000);
+    pField.appendChild(frag);
   }
 
-2. Add it to the init block at the bottom of the file:
+  var units = {
+    days:  { flip: document.getElementById("cgDaysFlip"),  num: document.getElementById("cgDays"),  val: null },
+    hours: { flip: document.getElementById("cgHoursFlip"), num: document.getElementById("cgHours"), val: null },
+    mins:  { flip: document.getElementById("cgMinsFlip"),  num: document.getElementById("cgMins"),  val: null },
+    secs:  { flip: document.getElementById("cgSecsFlip"),  num: document.getElementById("cgSecs"),  val: null }
+  };
+
+  function setUnit(unit, newVal) {
+    var padded = String(newVal).padStart(2, "0");
+    if (unit.val === newVal) return;
+    var first = unit.val === null;
+    unit.val = newVal;
+
+    if (reduceMotion || first) {
+      unit.num.textContent = padded;
+      return;
+    }
+
+    unit.flip.classList.add("flip-out");
+    setTimeout(function () {
+      unit.num.textContent = padded;
+      unit.flip.classList.remove("flip-out");
+      unit.flip.classList.add("flip-in");
+      setTimeout(function () {
+        unit.flip.classList.remove("flip-in");
+      }, 420);
+    }, 180);
+  }
+
+  function reveal() {
+    gate.style.transition = "opacity .8s ease";
+    gate.style.opacity = "0";
+    setTimeout(function () {
+      gate.remove();
+      document.body.classList.remove("cg-locked");
+    }, 850);
+  }
+
+  function tick() {
+    var diff = target - new Date();
+    if (diff <= 0) { clearInterval(timer); reveal(); return; }
+    setUnit(units.days,  Math.floor(diff / 86400000));
+    setUnit(units.hours, Math.floor((diff % 86400000) / 3600000));
+    setUnit(units.mins,  Math.floor((diff % 3600000) / 60000));
+    setUnit(units.secs,  Math.floor((diff % 60000) / 1000));
+  }
+
+  tick();
+  var timer = setInterval(tick, 1000);
+}
 
 javascript
   document.addEventListener("DOMContentLoaded", function () {
