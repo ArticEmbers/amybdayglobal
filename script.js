@@ -315,3 +315,48 @@
     initLetterReveal();
   });
 })();
+
+  /* ------------------------------------------------------------
+     7. COUNTDOWN GATE — locks the page until Nov 14, 2026
+     ------------------------------------------------------------ */
+  function initCountdownGate() {
+    var gate = document.getElementById("countdown-gate");
+    if (!gate) return;
+
+    var target = new Date("2026-11-14T00:00:00");
+    document.body.classList.add("cg-locked");
+
+    var daysEl = document.getElementById("cgDays");
+    var hoursEl = document.getElementById("cgHours");
+    var minsEl = document.getElementById("cgMins");
+    var secsEl = document.getElementById("cgSecs");
+
+    function reveal() {
+      gate.style.transition = "opacity .8s ease";
+      gate.style.opacity = "0";
+      setTimeout(function () {
+        gate.remove();
+        document.body.classList.remove("cg-locked");
+      }, 850);
+    }
+
+    function tick() {
+      var diff = target - new Date();
+      if (diff <= 0) {
+        clearInterval(timer);
+        reveal();
+        return;
+      }
+      var d = Math.floor(diff / 86400000);
+      var h = Math.floor((diff % 86400000) / 3600000);
+      var m = Math.floor((diff % 3600000) / 60000);
+      var s = Math.floor((diff % 60000) / 1000);
+      if (daysEl) daysEl.textContent = String(d).padStart(2, "0");
+      if (hoursEl) hoursEl.textContent = String(h).padStart(2, "0");
+      if (minsEl) minsEl.textContent = String(m).padStart(2, "0");
+      if (secsEl) secsEl.textContent = String(s).padStart(2, "0");
+    }
+
+    tick();
+    var timer = setInterval(tick, 1000);
+  }
