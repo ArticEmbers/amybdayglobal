@@ -4,14 +4,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#090a16">
+  <meta name="theme-color" content="#080914">
+  <meta name="description" content="A little archive of beautiful creations.">
   <title>HBDAYAG — Art Gallery</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 
   <style>
+    /* =========================================
+       RESET & VARIABLES
+    ========================================= */
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -19,18 +24,31 @@
     }
 
     :root {
-      --background: #090a16;
-      --surface: #111322;
-      --surface-light: #191b2d;
+      --background: #080914;
+      --surface: #101222;
+      --surface-light: #191b30;
+
       --text: #f3f0f8;
       --muted: #9293a9;
+      --subtle: #65677e;
+
       --gold: #d8bd8a;
+      --gold-light: #f0d9a9;
       --violet: #a99ad8;
+      --rose: #c99aaa;
+
       --border: rgba(255,255,255,0.09);
+      --gold-border: rgba(216,189,138,0.28);
+
+      --serif: "Playfair Display", serif;
+      --sans: "DM Sans", sans-serif;
+      --display: "Space Grotesk", sans-serif;
     }
 
     html {
       scroll-behavior: smooth;
+      scrollbar-color: #49405d var(--background);
+      scrollbar-width: thin;
     }
 
     body {
@@ -38,23 +56,66 @@
       overflow-x: hidden;
       background: var(--background);
       color: var(--text);
-      font-family: "DM Sans", sans-serif;
+      font-family: var(--sans);
     }
 
     body.modal-open {
       overflow: hidden;
     }
 
-    /* BACKGROUND */
+    button {
+      font: inherit;
+    }
+
+    button:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 5px;
+    }
+
+    ::selection {
+      background: rgba(216,189,138,0.3);
+      color: white;
+    }
+
+    /* =========================================
+       BACKGROUND
+    ========================================= */
 
     .background-glow {
       position: fixed;
       inset: 0;
-      z-index: -2;
+      z-index: -3;
       pointer-events: none;
       background:
-        radial-gradient(ellipse at 15% 15%, rgba(116, 94, 171, 0.13), transparent 42%),
-        radial-gradient(ellipse at 85% 80%, rgba(177, 142, 106, 0.08), transparent 40%);
+        radial-gradient(
+          ellipse at 12% 12%,
+          rgba(116,94,171,0.16),
+          transparent 43%
+        ),
+        radial-gradient(
+          ellipse at 88% 65%,
+          rgba(177,142,106,0.09),
+          transparent 42%
+        ),
+        radial-gradient(
+          ellipse at 50% 100%,
+          rgba(96,80,145,0.08),
+          transparent 50%
+        );
+    }
+
+    .background-grid {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      opacity: 0.13;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 80px 80px;
+      mask-image: linear-gradient(to bottom, black, transparent 85%);
     }
 
     .stars {
@@ -70,21 +131,29 @@
       width: 2px;
       height: 2px;
       border-radius: 50%;
-      background: #fff;
-      opacity: 0.4;
+      background: white;
+      opacity: 0.35;
       animation: twinkle 4s ease-in-out infinite alternate;
     }
 
     @keyframes twinkle {
-      from { opacity: 0.15; transform: scale(0.8); }
-      to { opacity: 0.8; transform: scale(1.3); }
+      from {
+        opacity: 0.12;
+        transform: scale(0.8);
+      }
+      to {
+        opacity: 0.8;
+        transform: scale(1.4);
+      }
     }
 
-    /* NAVIGATION */
+    /* =========================================
+       NAVIGATION
+    ========================================= */
 
     .topbar {
-      width: min(1200px, calc(100% - 48px));
-      height: 85px;
+      width: min(1320px, calc(100% - 80px));
+      height: 88px;
       margin: auto;
       display: flex;
       align-items: center;
@@ -93,60 +162,89 @@
     }
 
     .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       color: var(--text);
       text-decoration: none;
-      font-family: "Playfair Display", serif;
-      font-size: 1.15rem;
+      font-family: var(--display);
+      font-size: 1rem;
+      font-weight: 600;
       letter-spacing: 2px;
     }
 
-    .brand span {
+    .brand-symbol {
+      color: var(--gold);
+      font-size: 1.2rem;
+    }
+
+    .brand span:last-child {
       color: var(--gold);
     }
 
     .back-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       color: var(--muted);
       text-decoration: none;
-      font-size: 0.85rem;
-      transition: color 0.25s;
+      font-size: 0.8rem;
+      transition: color 0.25s, gap 0.25s;
     }
 
     .back-link:hover {
       color: var(--gold);
+      gap: 15px;
     }
 
-    /* INTRO */
+    /* =========================================
+       INTRODUCTION
+    ========================================= */
 
     .intro {
-      width: min(1200px, calc(100% - 48px));
+      position: relative;
+      width: min(1320px, calc(100% - 80px));
       margin: auto;
-      padding: 90px 0 55px;
+      padding: 105px 0 55px;
+      animation: introAppear 1s ease both;
+    }
+
+    @keyframes introAppear {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .eyebrow {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 14px;
       color: var(--gold);
-      font-size: 0.7rem;
+      font-family: var(--display);
+      font-size: 0.67rem;
       letter-spacing: 4px;
       text-transform: uppercase;
-      margin-bottom: 22px;
+      margin-bottom: 25px;
     }
 
     .eyebrow::before {
       content: "";
-      width: 28px;
+      width: 32px;
       height: 1px;
       background: var(--gold);
     }
 
     .intro h1 {
-      font-family: "Playfair Display", serif;
-      font-size: clamp(3rem, 7vw, 5.5rem);
-      line-height: 1.08;
+      font-family: var(--serif);
+      font-size: clamp(3.5rem, 8vw, 7rem);
+      line-height: 1.03;
       font-weight: 400;
-      letter-spacing: -2px;
+      letter-spacing: -3px;
     }
 
     .intro h1 span {
@@ -155,74 +253,169 @@
     }
 
     .intro-description {
-      max-width: 510px;
-      margin-top: 22px;
+      max-width: 540px;
+      margin-top: 25px;
       color: var(--muted);
-      font-size: 0.95rem;
-      line-height: 1.8;
+      font-size: 0.92rem;
+      line-height: 1.9;
     }
 
-    .gallery-meta {
+    .intro-decoration {
+      position: absolute;
+      right: 8%;
+      top: 115px;
+      color: rgba(216,189,138,0.13);
+      font-family: var(--serif);
+      font-size: clamp(8rem, 18vw, 17rem);
+      font-weight: 400;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    /* =========================================
+       GALLERY TOOLBAR
+    ========================================= */
+
+    .gallery-toolbar {
+      width: min(1320px, calc(100% - 80px));
+      margin: 25px auto 28px;
+      padding: 22px 0;
       display: flex;
-      align-items: center;
       justify-content: space-between;
-      margin-top: 48px;
-      padding-bottom: 15px;
+      align-items: center;
+      gap: 20px;
+      border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
     }
 
-    .gallery-meta h2 {
-      font-size: 0.75rem;
-      font-weight: 500;
+    .toolbar-left {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .toolbar-title {
+      font-family: var(--display);
+      font-size: 0.76rem;
       letter-spacing: 2px;
       text-transform: uppercase;
     }
 
     .art-count {
       color: var(--muted);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
     }
 
-    /* ARTWORK GRID */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .filter-button {
+      padding: 9px 15px;
+      border: 1px solid transparent;
+      border-radius: 30px;
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.72rem;
+      cursor: pointer;
+      transition: 0.25s ease;
+    }
+
+    .filter-button:hover {
+      color: var(--text);
+      border-color: var(--border);
+    }
+
+    .filter-button.active {
+      color: var(--gold-light);
+      border-color: var(--gold-border);
+      background: rgba(216,189,138,0.08);
+    }
+
+    /* =========================================
+       GALLERY GRID
+    ========================================= */
 
     .gallery {
-      width: min(1200px, calc(100% - 48px));
-      margin: 0 auto 110px;
+      width: min(1320px, calc(100% - 80px));
+      margin: 0 auto 120px;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-auto-rows: 155px;
       gap: 18px;
     }
 
     .art-card {
       position: relative;
       min-width: 0;
-      height: 390px;
+      min-height: 0;
       overflow: hidden;
       isolation: isolate;
       border: 1px solid var(--border);
-      border-radius: 5px;
+      border-radius: 4px;
       background: var(--surface);
-      cursor: pointer;
-      text-align: left;
       color: var(--text);
-      animation: cardAppear 0.7s ease both;
+      text-align: left;
+      cursor: pointer;
+      animation: cardAppear 0.8s ease both;
+      transition:
+        border-color 0.35s,
+        box-shadow 0.35s,
+        opacity 0.3s,
+        transform 0.3s;
     }
 
-    .art-card:nth-child(2) { animation-delay: 0.08s; }
-    .art-card:nth-child(3) { animation-delay: 0.16s; }
-    .art-card:nth-child(4) { animation-delay: 0.24s; }
-    .art-card:nth-child(5) { animation-delay: 0.32s; }
-    .art-card:nth-child(6) { animation-delay: 0.4s; }
+    /* Asymmetrical layout */
+
+    .art-card:nth-child(1) {
+      grid-row: span 3;
+    }
+
+    .art-card:nth-child(2) {
+      grid-row: span 2;
+    }
+
+    .art-card:nth-child(3) {
+      grid-row: span 2;
+    }
+
+    .art-card:nth-child(4) {
+      grid-row: span 2;
+    }
+
+    .art-card:nth-child(5) {
+      grid-row: span 3;
+    }
+
+    .art-card:nth-child(6) {
+      grid-row: span 2;
+    }
+
+    .art-card:nth-child(2n) {
+      animation-delay: 0.1s;
+    }
+
+    .art-card:nth-child(3n) {
+      animation-delay: 0.2s;
+    }
 
     @keyframes cardAppear {
       from {
         opacity: 0;
-        transform: translateY(18px);
+        transform: translateY(25px);
       }
       to {
         opacity: 1;
         transform: translateY(0);
       }
+    }
+
+    .art-card.hidden {
+      display: none;
     }
 
     .art-card img {
@@ -232,77 +425,162 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 0.7s cubic-bezier(.2,.7,.2,1);
+      transition:
+        transform 0.9s cubic-bezier(.2,.7,.2,1),
+        filter 0.6s;
+    }
+
+    .art-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background:
+        linear-gradient(
+          to top,
+          rgba(5,6,15,0.96) 0%,
+          rgba(5,6,15,0.65) 25%,
+          rgba(5,6,15,0.08) 65%,
+          rgba(5,6,15,0.04) 100%
+        );
+      transition: opacity 0.4s;
     }
 
     .art-card::after {
       content: "";
       position: absolute;
       inset: 0;
-      z-index: -1;
-      background: linear-gradient(
-        to top,
-        rgba(5, 6, 15, 0.95) 0%,
-        rgba(5, 6, 15, 0.35) 38%,
-        rgba(5, 6, 15, 0.03) 75%
-      );
-      transition: opacity 0.35s;
-    }
-
-    .art-card:hover img {
-      transform: scale(1.07);
+      border: 1px solid transparent;
+      pointer-events: none;
+      transition: border-color 0.4s;
     }
 
     .art-card:hover {
+      z-index: 2;
       border-color: rgba(216,189,138,0.5);
+      box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+    }
+
+    .art-card:hover img {
+      transform: scale(1.075);
+      filter: brightness(1.08);
+    }
+
+    .art-card:hover::after {
+      border-color: rgba(216,189,138,0.22);
     }
 
     .art-card-content {
       position: absolute;
-      right: 22px;
-      bottom: 22px;
-      left: 22px;
+      right: 25px;
+      bottom: 25px;
+      left: 25px;
       display: flex;
       flex-direction: column;
-      gap: 7px;
+      gap: 9px;
+      transform: translateY(5px);
+      transition: transform 0.4s;
+    }
+
+    .art-card:hover .art-card-content {
+      transform: translateY(0);
     }
 
     .art-category {
+      display: flex;
+      align-items: center;
+      gap: 9px;
       color: var(--gold);
-      font-size: 0.65rem;
+      font-family: var(--display);
+      font-size: 0.63rem;
       letter-spacing: 2px;
       text-transform: uppercase;
     }
 
+    .art-category::before {
+      content: "";
+      width: 17px;
+      height: 1px;
+      background: var(--gold);
+    }
+
     .art-title {
-      font-family: "Playfair Display", serif;
-      font-size: 1.55rem;
+      font-family: var(--serif);
+      font-size: clamp(1.3rem, 2.1vw, 2rem);
       font-weight: 400;
+      line-height: 1.25;
     }
 
     .art-open {
       position: absolute;
-      top: 18px;
-      right: 18px;
-      width: 36px;
-      height: 36px;
+      top: 20px;
+      right: 20px;
+      width: 40px;
+      height: 40px;
       display: grid;
       place-items: center;
       border: 1px solid rgba(255,255,255,0.35);
       border-radius: 50%;
-      background: rgba(10,10,20,0.3);
+      background: rgba(10,10,20,0.25);
       color: white;
       font-size: 1.1rem;
-      backdrop-filter: blur(8px);
-      transition: background 0.25s, color 0.25s;
+      backdrop-filter: blur(10px);
+      transition:
+        background 0.3s,
+        color 0.3s,
+        transform 0.3s;
     }
 
     .art-card:hover .art-open {
       background: var(--gold);
       color: #15131a;
+      transform: rotate(45deg);
     }
 
-    /* VIEWER */
+    .art-index {
+      position: absolute;
+      top: 23px;
+      left: 24px;
+      color: rgba(255,255,255,0.75);
+      font-family: var(--display);
+      font-size: 0.68rem;
+      letter-spacing: 2px;
+      text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    /* =========================================
+       EMPTY FILTER STATE
+    ========================================= */
+
+    .empty-state {
+      display: none;
+      width: min(1320px, calc(100% - 80px));
+      margin: 0 auto 120px;
+      padding: 90px 20px;
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    .empty-state span {
+      display: block;
+      margin-bottom: 15px;
+      color: var(--gold);
+      font-family: var(--serif);
+      font-size: 3rem;
+    }
+
+    .empty-state p {
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+
+    /* =========================================
+       ARTWORK VIEWER
+    ========================================= */
 
     .viewer {
       position: fixed;
@@ -312,11 +590,13 @@
       align-items: center;
       justify-content: center;
       padding: 35px;
-      background: rgba(5, 5, 13, 0.88);
-      backdrop-filter: blur(14px);
+      background: rgba(4,5,13,0.92);
+      backdrop-filter: blur(18px);
       opacity: 0;
       visibility: hidden;
-      transition: opacity 0.35s, visibility 0.35s;
+      transition:
+        opacity 0.4s,
+        visibility 0.4s;
     }
 
     .viewer.active {
@@ -327,28 +607,35 @@
     .viewer-panel {
       position: relative;
       display: grid;
-      grid-template-columns: 1.15fr 0.85fr;
-      width: min(1100px, 100%);
-      max-height: 85vh;
-      min-height: 500px;
+      grid-template-columns: 1.25fr 0.75fr;
+      width: min(1200px, 100%);
+      max-height: 88vh;
+      min-height: 580px;
       overflow: hidden;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--surface);
-      box-shadow: 0 30px 100px rgba(0,0,0,0.5);
-      transform: translateY(20px) scale(0.98);
-      transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+      border: 1px solid rgba(216,189,138,0.2);
+      border-radius: 5px;
+      background: #101221;
+      box-shadow: 0 30px 120px rgba(0,0,0,0.65);
+      transform: translateY(25px) scale(0.97);
+      transition: transform 0.5s cubic-bezier(.2,.7,.2,1);
     }
 
     .viewer.active .viewer-panel {
       transform: translateY(0) scale(1);
     }
 
+    /* Image */
+
     .viewer-image-wrap {
       position: relative;
-      min-height: 500px;
+      min-width: 0;
+      min-height: 580px;
+      display: grid;
+      place-items: center;
       overflow: hidden;
-      background: #080912;
+      background:
+        radial-gradient(ellipse, rgba(115,94,160,0.12), transparent 70%),
+        #080914;
     }
 
     .viewer-image {
@@ -357,141 +644,362 @@
       position: absolute;
       inset: 0;
       object-fit: contain;
-      padding: 15px;
+      padding: 30px;
+      opacity: 0;
+      transform: scale(0.98);
+      transition:
+        opacity 0.35s,
+        transform 0.5s;
     }
 
+    .viewer-image.loaded {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    .image-loading {
+      position: absolute;
+      width: 35px;
+      height: 35px;
+      border: 2px solid rgba(255,255,255,0.12);
+      border-top-color: var(--gold);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .viewer-image-wrap.loaded .image-loading {
+      display: none;
+    }
+
+    /* Information */
+
     .viewer-info {
+      position: relative;
       display: flex;
       flex-direction: column;
-      padding: 65px 48px 45px;
+      padding: 85px 55px 50px;
       overflow-y: auto;
     }
 
     .viewer-number {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       color: var(--gold);
-      font-size: 0.7rem;
+      font-family: var(--display);
+      font-size: 0.68rem;
       letter-spacing: 3px;
       text-transform: uppercase;
-      margin-bottom: 24px;
+      margin-bottom: 32px;
+    }
+
+    .viewer-number::before {
+      content: "";
+      width: 25px;
+      height: 1px;
+      background: var(--gold);
     }
 
     .viewer-title {
-      font-family: "Playfair Display", serif;
-      font-size: clamp(2rem, 4vw, 3.2rem);
-      line-height: 1.2;
+      font-family: var(--serif);
+      font-size: clamp(2.3rem, 4vw, 3.7rem);
+      line-height: 1.15;
       font-weight: 400;
+      overflow-wrap: anywhere;
     }
 
     .viewer-divider {
-      width: 45px;
+      width: 50px;
       height: 1px;
-      margin: 28px 0;
+      margin: 32px 0;
       background: var(--gold);
     }
 
     .viewer-description {
-      color: #b4b3c4;
-      font-size: 0.93rem;
-      line-height: 2;
+      color: #b5b4c5;
+      font-size: 0.88rem;
+      line-height: 2.1;
       white-space: pre-line;
     }
 
     .viewer-category {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       margin-top: auto;
-      padding-top: 35px;
+      padding-top: 45px;
       color: var(--gold);
-      font-size: 0.7rem;
+      font-family: var(--display);
+      font-size: 0.67rem;
       letter-spacing: 2px;
       text-transform: uppercase;
     }
 
+    .viewer-category::before {
+      content: "✦";
+      font-size: 0.8rem;
+    }
+
+    /* Viewer controls */
+
     .close-viewer {
       position: absolute;
-      top: 17px;
-      right: 17px;
+      top: 20px;
+      right: 20px;
       z-index: 5;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       display: grid;
       place-items: center;
       border: 1px solid var(--border);
       border-radius: 50%;
-      background: rgba(10,10,20,0.7);
+      background: rgba(10,10,20,0.65);
       color: white;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       cursor: pointer;
-      transition: background 0.2s, color 0.2s;
+      backdrop-filter: blur(10px);
+      transition: 0.25s;
     }
 
     .close-viewer:hover {
+      border-color: var(--gold);
+      background: var(--gold);
+      color: #111;
+      transform: rotate(90deg);
+    }
+
+    .viewer-nav {
+      position: absolute;
+      bottom: 25px;
+      left: 30px;
+      z-index: 4;
+      display: flex;
+      gap: 8px;
+    }
+
+    .viewer-nav button {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 50%;
+      background: rgba(8,9,20,0.65);
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      transition: 0.25s;
+    }
+
+    .viewer-nav button:hover {
+      border-color: var(--gold);
       background: var(--gold);
       color: #111;
     }
 
-    /* FOOTER */
+    .viewer-nav button:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .viewer-progress {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      height: 2px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .viewer-progress-bar {
+      width: 0;
+      height: 100%;
+      background: var(--gold);
+      transition: width 0.35s;
+    }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
 
     footer {
-      width: min(1200px, calc(100% - 48px));
+      width: min(1320px, calc(100% - 80px));
       margin: auto;
-      padding: 30px 0 45px;
+      padding: 35px 0 45px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 20px;
       border-top: 1px solid var(--border);
       color: var(--muted);
-      font-size: 0.75rem;
+      font-size: 0.72rem;
     }
 
     footer span {
       color: var(--gold);
     }
 
-    /* RESPONSIVE */
+    .footer-mark {
+      color: var(--subtle);
+      font-family: var(--display);
+      letter-spacing: 2px;
+    }
 
-    @media (max-width: 900px) {
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+
+    @media (min-width: 1500px) {
       .gallery {
-        grid-template-columns: repeat(2, 1fr);
+        grid-auto-rows: 175px;
+      }
+    }
+
+    @media (max-width: 950px) {
+      .topbar,
+      .intro,
+      .gallery-toolbar,
+      .gallery,
+      footer {
+        width: min(100% - 50px, 1320px);
       }
 
-      .art-card {
-        height: 340px;
+      .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 175px;
+      }
+
+      .art-card:nth-child(1) {
+        grid-row: span 3;
+      }
+
+      .art-card:nth-child(2) {
+        grid-row: span 2;
+      }
+
+      .art-card:nth-child(3) {
+        grid-row: span 2;
+      }
+
+      .art-card:nth-child(4) {
+        grid-row: span 3;
+      }
+
+      .art-card:nth-child(5) {
+        grid-row: span 2;
+      }
+
+      .art-card:nth-child(6) {
+        grid-row: span 2;
       }
 
       .viewer-panel {
-        grid-template-columns: 1fr 0.9fr;
+        grid-template-columns: 1fr 0.85fr;
+        min-height: 480px;
+      }
+
+      .viewer-image-wrap {
+        min-height: 480px;
       }
 
       .viewer-info {
-        padding: 60px 28px 30px;
+        padding: 75px 32px 35px;
       }
     }
 
     @media (max-width: 650px) {
+      .topbar,
+      .intro,
+      .gallery-toolbar,
+      .gallery,
+      footer {
+        width: calc(100% - 36px);
+      }
+
       .topbar {
-        height: 70px;
+        height: 72px;
+      }
+
+      .brand {
+        font-size: 0.9rem;
+      }
+
+      .back-link {
+        font-size: 0.7rem;
       }
 
       .intro {
-        padding-top: 65px;
+        padding: 75px 0 35px;
+      }
+
+      .intro h1 {
+        font-size: clamp(3.3rem, 14vw, 5rem);
+        letter-spacing: -2px;
+      }
+
+      .intro-description {
+        font-size: 0.85rem;
+      }
+
+      .intro-decoration {
+        top: 100px;
+        right: 0;
+        font-size: 8rem;
+        opacity: 0.5;
+      }
+
+      .gallery-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-top: 20px;
+      }
+
+      .filters {
+        justify-content: flex-start;
+      }
+
+      .filter-button {
+        padding: 8px 12px;
+        font-size: 0.68rem;
       }
 
       .gallery {
         grid-template-columns: 1fr;
-        gap: 14px;
+        grid-auto-rows: auto;
+        gap: 15px;
+        margin-bottom: 80px;
       }
 
-      .art-card {
-        height: 420px;
+      .art-card,
+      .art-card:nth-child(n) {
+        height: 390px;
+        grid-row: auto;
       }
+
+      .art-card:nth-child(2n) {
+        height: 330px;
+      }
+
+      .art-title {
+        font-size: 1.65rem;
+      }
+
+      /* Mobile viewer */
 
       .viewer {
-        padding: 15px;
+        padding: 10px;
       }
 
       .viewer-panel {
         display: flex;
         flex-direction: column;
-        max-height: 92vh;
+        width: 100%;
+        max-height: 94vh;
         min-height: 0;
         overflow-y: auto;
       }
@@ -502,35 +1010,81 @@
         height: 48vh;
       }
 
+      .viewer-image {
+        padding: 15px;
+      }
+
       .viewer-info {
         flex: none;
-        padding: 30px 25px;
+        padding: 35px 27px 30px;
         overflow: visible;
       }
 
       .viewer-number {
-        margin-bottom: 12px;
+        margin-bottom: 18px;
+      }
+
+      .viewer-title {
+        font-size: 2.5rem;
       }
 
       .viewer-divider {
-        margin: 18px 0;
+        margin: 22px 0;
+      }
+
+      .viewer-description {
+        font-size: 0.83rem;
       }
 
       .viewer-category {
-        padding-top: 25px;
+        padding-top: 28px;
+      }
+
+      .close-viewer {
+        top: 12px;
+        right: 12px;
+        width: 38px;
+        height: 38px;
+      }
+
+      .viewer-nav {
+        bottom: 15px;
+        left: 15px;
+      }
+
+      .viewer-nav button {
+        width: 37px;
+        height: 37px;
       }
 
       footer {
-        gap: 15px;
         flex-direction: column;
         text-align: center;
       }
     }
 
+    @media (max-width: 380px) {
+      .back-link {
+        font-size: 0.64rem;
+      }
+
+      .art-card,
+      .art-card:nth-child(n) {
+        height: 310px;
+      }
+
+      .filters {
+        gap: 4px;
+      }
+    }
+
     @media (prefers-reduced-motion: reduce) {
-      *, *::before, *::after {
+      *,
+      *::before,
+      *::after {
         scroll-behavior: auto !important;
         animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
       }
     }
@@ -540,17 +1094,36 @@
 <body>
 
   <div class="background-glow"></div>
+  <div class="background-grid"></div>
   <div class="stars" id="stars"></div>
 
-  <!-- NAVIGATION -->
+  <!-- =====================================
+       NAVIGATION
+  ====================================== -->
+
   <header class="topbar">
-    <a href="index.html" class="brand">HBDAY<span>AG</span></a>
-    <a href="index.html" class="back-link">← Back to birthday page</a>
+    <a href="index.html" class="brand">
+      <span class="brand-symbol">✦</span>
+      HBDAY<span>AG</span>
+    </a>
+
+    <a href="index.html" class="back-link">
+      <span>←</span>
+      Back to birthday page
+    </a>
   </header>
 
-  <!-- INTRODUCTION -->
+  <!-- =====================================
+       INTRODUCTION
+  ====================================== -->
+
   <section class="intro">
-    <div class="eyebrow">A little collection</div>
+
+    <div class="intro-decoration" aria-hidden="true">✳</div>
+
+    <div class="eyebrow">
+      A little collection
+    </div>
 
     <h1>
       An archive of<br>
@@ -559,125 +1132,242 @@
 
     <p class="intro-description">
       Every piece tells a story, captures a moment, or brings an idea to life.
-      Here's a little space dedicated to the things she creates.
+      A little space dedicated to the imagination, creativity, and beautiful
+      things she brings into the world.
     </p>
 
-    <div class="gallery-meta">
-      <h2>Selected artworks</h2>
-      <span class="art-count" id="art-count">06 pieces</span>
-    </div>
   </section>
 
-  <!-- GALLERY GRID -->
+  <!-- =====================================
+       GALLERY TOOLBAR
+  ====================================== -->
+
+  <section class="gallery-toolbar">
+
+    <div class="toolbar-left">
+      <h2 class="toolbar-title">Selected artworks</h2>
+      <span class="art-count" id="art-count">06 pieces</span>
+    </div>
+
+    <div class="filters" id="filters" aria-label="Filter artworks">
+
+      <button class="filter-button active" data-filter="all" aria-pressed="true">
+        All works
+      </button>
+
+      <button class="filter-button" data-filter="Illustration" aria-pressed="false">
+        Illustration
+      </button>
+
+      <button class="filter-button" data-filter="Digital art" aria-pressed="false">
+        Digital art
+      </button>
+
+      <button class="filter-button" data-filter="Sketch" aria-pressed="false">
+        Sketch
+      </button>
+
+      <button class="filter-button" data-filter="Painting" aria-pressed="false">
+        Painting
+      </button>
+
+    </div>
+
+  </section>
+
+  <!-- =====================================
+       ARTWORK GALLERY
+  ====================================== -->
+
   <main class="gallery" id="gallery">
 
     <!-- ARTWORK 01 -->
+
     <button class="art-card"
+      type="button"
       data-image="artworks/artwork-01.jpg"
       data-title="Artwork title"
       data-category="Illustration"
       data-description="Write the description of this artwork here. You can explain what inspired it, what it represents, or simply leave a little message about it.">
 
-      <img src="artworks/artwork-01.jpg" alt="Artwork 1">
-      <span class="art-open">↗</span>
+      <img src="artworks/artwork-01.jpg" alt="Artwork 1" loading="lazy">
+
+      <span class="art-index">01 / 06</span>
+      <span class="art-open" aria-hidden="true">↗</span>
+
       <span class="art-card-content">
         <span class="art-category">Illustration</span>
         <span class="art-title">Artwork title</span>
       </span>
+
     </button>
 
     <!-- ARTWORK 02 -->
+
     <button class="art-card"
+      type="button"
       data-image="artworks/artwork-02.jpg"
       data-title="A different world"
       data-category="Digital art"
       data-description="Add a little description here. Tell the story behind this piece or what makes it special.">
 
-      <img src="artworks/artwork-02.jpg" alt="Artwork 2">
-      <span class="art-open">↗</span>
+      <img src="artworks/artwork-02.jpg" alt="Artwork 2" loading="lazy">
+
+      <span class="art-index">02 / 06</span>
+      <span class="art-open" aria-hidden="true">↗</span>
+
       <span class="art-card-content">
         <span class="art-category">Digital art</span>
         <span class="art-title">A different world</span>
       </span>
+
     </button>
 
     <!-- ARTWORK 03 -->
+
     <button class="art-card"
+      type="button"
       data-image="artworks/artwork-03.jpg"
       data-title="Untitled"
       data-category="Sketch"
       data-description="A description for this artwork goes here.">
 
-      <img src="artworks/artwork-03.jpg" alt="Artwork 3">
-      <span class="art-open">↗</span>
+      <img src="artworks/artwork-03.jpg" alt="Artwork 3" loading="lazy">
+
+      <span class="art-index">03 / 06</span>
+      <span class="art-open" aria-hidden="true">↗</span>
+
       <span class="art-card-content">
         <span class="art-category">Sketch</span>
         <span class="art-title">Untitled</span>
       </span>
+
     </button>
 
     <!-- ARTWORK 04 -->
+
     <button class="art-card"
+      type="button"
       data-image="artworks/artwork-04.jpg"
       data-title="Little details"
       data-category="Painting"
       data-description="A few words about this painting.">
 
-      <img src="artworks/artwork-04.jpg" alt="Artwork 4">
-      <span class="art-open">↗</span>
+      <img src="artworks/artwork-04.jpg" alt="Artwork 4" loading="lazy">
+
+      <span class="art-index">04 / 06</span>
+      <span class="art-open" aria-hidden="true">↗</span>
+
       <span class="art-card-content">
         <span class="art-category">Painting</span>
         <span class="art-title">Little details</span>
       </span>
+
     </button>
 
     <!-- ARTWORK 05 -->
+
     <button class="art-card"
+      type="button"
       data-image="artworks/artwork-05.jpg"
       data-title="Somewhere in time"
       data-category="Digital art"
       data-description="Add the story or description of this piece here.">
 
-      <img src="artworks/artwork-05.jpg" alt="Artwork 5">
-      <span class="art-open">↗</span>
+      <img src="artworks/artwork-05.jpg" alt="Artwork 5" loading="lazy">
+
+      <span class="art-index">05 / 06</span>
+      <span class="art-open" aria-hidden="true">↗</span>
+
       <span class="art-card-content">
         <span class="art-category">Digital art</span>
         <span class="art-title">Somewhere in time</span>
       </span>
+
     </button>
 
     <!-- ARTWORK 06 -->
+
     <button class="art-card"
+      type="button"
       data-image="artworks/artwork-06.jpg"
       data-title="Another creation"
       data-category="Illustration"
       data-description="Every creation deserves its own little space. Write something here.">
 
-      <img src="artworks/artwork-06.jpg" alt="Artwork 6">
-      <span class="art-open">↗</span>
+      <img src="artworks/artwork-06.jpg" alt="Artwork 6" loading="lazy">
+
+      <span class="art-index">06 / 06</span>
+      <span class="art-open" aria-hidden="true">↗</span>
+
       <span class="art-card-content">
         <span class="art-category">Illustration</span>
         <span class="art-title">Another creation</span>
       </span>
+
     </button>
 
   </main>
 
-  <!-- ARTWORK VIEWER -->
+  <div class="empty-state" id="empty-state">
+    <span>✧</span>
+    <p>No artworks found in this category.</p>
+  </div>
+
+  <!-- =====================================
+       ARTWORK VIEWER
+  ====================================== -->
+
   <div class="viewer" id="viewer" aria-hidden="true">
 
-    <div class="viewer-panel" role="dialog" aria-modal="true" aria-labelledby="viewer-title">
+    <div
+      class="viewer-panel"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="viewer-title"
+      aria-describedby="viewer-description"
+      tabindex="-1"
+    >
 
-      <button class="close-viewer" id="close-viewer" aria-label="Close artwork viewer">
+      <button
+        class="close-viewer"
+        id="close-viewer"
+        type="button"
+        aria-label="Close artwork viewer"
+      >
         ×
       </button>
 
-      <div class="viewer-image-wrap">
-        <img class="viewer-image" id="viewer-image" src="" alt="">
+      <div class="viewer-image-wrap" id="viewer-image-wrap">
+
+        <div class="image-loading"></div>
+
+        <img
+          class="viewer-image"
+          id="viewer-image"
+          src=""
+          alt=""
+        >
+
+        <div class="viewer-nav">
+
+          <button id="previous-art" type="button" aria-label="Previous artwork">
+            ←
+          </button>
+
+          <button id="next-art" type="button" aria-label="Next artwork">
+            →
+          </button>
+
+        </div>
+
       </div>
 
       <div class="viewer-info">
-        <div class="viewer-number" id="viewer-number">Artwork 01</div>
+
+        <div class="viewer-number" id="viewer-number">
+          Artwork 01
+        </div>
 
         <h2 class="viewer-title" id="viewer-title">
           Artwork title
@@ -692,107 +1382,394 @@
         <div class="viewer-category" id="viewer-category">
           Illustration
         </div>
+
+      </div>
+
+      <div class="viewer-progress">
+        <div class="viewer-progress-bar" id="viewer-progress"></div>
       </div>
 
     </div>
+
   </div>
 
-  <!-- FOOTER -->
+  <!-- =====================================
+       FOOTER
+  ====================================== -->
+
   <footer>
-    <p>A small archive of <span>beautiful creations.</span></p>
-    <p>HBDAYAG · Made with care</p>
+
+    <p>
+      A small archive of
+      <span>beautiful creations.</span>
+    </p>
+
+    <p class="footer-mark">
+      HBDAYAG · MADE WITH CARE
+    </p>
+
   </footer>
 
+  <!-- =====================================
+       JAVASCRIPT
+  ====================================== -->
+
   <script>
-    // STARFIELD
+
+    /* =====================================
+       STARFIELD
+    ====================================== */
+
     const starContainer = document.getElementById("stars");
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 110; i++) {
       const star = document.createElement("span");
-      star.className = "star";
 
+      star.className = "star";
       star.style.left = Math.random() * 100 + "%";
       star.style.top = Math.random() * 100 + "%";
       star.style.animationDelay = Math.random() * 5 + "s";
       star.style.animationDuration = (2 + Math.random() * 4) + "s";
 
+      const size = Math.random() > 0.85 ? 3 : 2;
+      star.style.width = size + "px";
+      star.style.height = size + "px";
+
       starContainer.appendChild(star);
     }
 
-    // GALLERY VIEWER
-    const cards = document.querySelectorAll(".art-card");
+
+    /* =====================================
+       GALLERY ELEMENTS
+    ====================================== */
+
+    const cards = Array.from(document.querySelectorAll(".art-card"));
+    const filterButtons = document.querySelectorAll(".filter-button");
+
+    const artCount = document.getElementById("art-count");
+    const emptyState = document.getElementById("empty-state");
+
     const viewer = document.getElementById("viewer");
+    const viewerPanel = document.querySelector(".viewer-panel");
 
     const viewerImage = document.getElementById("viewer-image");
+    const viewerImageWrap = document.getElementById("viewer-image-wrap");
+
     const viewerTitle = document.getElementById("viewer-title");
     const viewerDescription = document.getElementById("viewer-description");
     const viewerCategory = document.getElementById("viewer-category");
     const viewerNumber = document.getElementById("viewer-number");
+    const viewerProgress = document.getElementById("viewer-progress");
 
     const closeButton = document.getElementById("close-viewer");
+    const previousButton = document.getElementById("previous-art");
+    const nextButton = document.getElementById("next-art");
 
+
+    /* =====================================
+       ARTWORK DATA
+    ====================================== */
+
+    let visibleCards = [...cards];
+    let currentIndex = 0;
     let previousFocus = null;
+    let isViewerOpen = false;
 
-    // Update the number of artworks automatically
-    document.getElementById("art-count").textContent =
-      String(cards.length).padStart(2, "0") + " pieces";
 
-    // Open artwork
-    cards.forEach((card, index) => {
-      card.addEventListener("click", () => {
-        previousFocus = card;
+    /* =====================================
+       ARTWORK COUNTER
+    ====================================== */
 
-        const image = card.dataset.image;
-        const title = card.dataset.title;
-        const category = card.dataset.category;
-        const description = card.dataset.description;
+    function updateCounter() {
+      const count = visibleCards.length;
 
-        viewerImage.src = image;
-        viewerImage.alt = title;
+      artCount.textContent =
+        String(count).padStart(2, "0") +
+        (count === 1 ? " piece" : " pieces");
 
-        viewerTitle.textContent = title;
-        viewerDescription.textContent = description;
-        viewerCategory.textContent = category;
+      emptyState.classList.toggle("visible", count === 0);
+    }
 
-        viewerNumber.textContent =
-          "Artwork " + String(index + 1).padStart(2, "0");
+    updateCounter();
 
-        viewer.classList.add("active");
-        viewer.setAttribute("aria-hidden", "false");
-        document.body.classList.add("modal-open");
 
-        closeButton.focus();
+    /* =====================================
+       FILTER SYSTEM
+    ====================================== */
+
+    filterButtons.forEach(button => {
+
+      button.addEventListener("click", () => {
+
+        const filter = button.dataset.filter;
+
+        filterButtons.forEach(item => {
+          item.classList.remove("active");
+          item.setAttribute("aria-pressed", "false");
+        });
+
+        button.classList.add("active");
+        button.setAttribute("aria-pressed", "true");
+
+        visibleCards = cards.filter(card => {
+
+          const category = card.dataset.category;
+
+          return filter === "all" || category === filter;
+
+        });
+
+        cards.forEach(card => {
+
+          const shouldShow =
+            filter === "all" ||
+            card.dataset.category === filter;
+
+          card.classList.toggle("hidden", !shouldShow);
+
+        });
+
+        updateCounter();
+
       });
+
     });
 
-    // Close artwork
+
+    /* =====================================
+       VIEWER IMAGE LOADING
+    ====================================== */
+
+    function loadViewerImage(source, title) {
+
+      viewerImage.classList.remove("loaded");
+      viewerImageWrap.classList.remove("loaded");
+
+      viewerImage.alt = title;
+      viewerImage.src = "";
+
+      const image = new Image();
+
+      image.onload = () => {
+
+        viewerImage.src = source;
+
+        requestAnimationFrame(() => {
+          viewerImage.classList.add("loaded");
+          viewerImageWrap.classList.add("loaded");
+        });
+
+      };
+
+      image.onerror = () => {
+
+        viewerImage.src = source;
+        viewerImage.classList.add("loaded");
+        viewerImageWrap.classList.add("loaded");
+
+      };
+
+      image.src = source;
+    }
+
+
+    /* =====================================
+       UPDATE VIEWER
+    ====================================== */
+
+    function updateViewer() {
+
+      if (!visibleCards.length) return;
+
+      const card = visibleCards[currentIndex];
+
+      const image = card.dataset.image;
+      const title = card.dataset.title;
+      const category = card.dataset.category;
+      const description = card.dataset.description;
+
+      loadViewerImage(image, title);
+
+      viewerTitle.textContent = title;
+      viewerDescription.textContent = description;
+      viewerCategory.textContent = category;
+
+      viewerNumber.textContent =
+        "Artwork " +
+        String(cards.indexOf(card) + 1).padStart(2, "0") +
+        " / " +
+        String(cards.length).padStart(2, "0");
+
+      viewerProgress.style.width =
+        ((currentIndex + 1) / visibleCards.length * 100) + "%";
+
+      previousButton.disabled = currentIndex === 0;
+      nextButton.disabled = currentIndex === visibleCards.length - 1;
+
+    }
+
+
+    /* =====================================
+       OPEN VIEWER
+    ====================================== */
+
+    function openViewer(card) {
+
+      const index = visibleCards.indexOf(card);
+
+      if (index === -1) return;
+
+      currentIndex = index;
+      previousFocus = card;
+      isViewerOpen = true;
+
+      updateViewer();
+
+      viewer.classList.add("active");
+      viewer.setAttribute("aria-hidden", "false");
+
+      document.body.classList.add("modal-open");
+
+      closeButton.focus();
+
+    }
+
+
+    cards.forEach(card => {
+
+      card.addEventListener("click", () => {
+        openViewer(card);
+      });
+
+    });
+
+
+    /* =====================================
+       NAVIGATION
+    ====================================== */
+
+    function previousArtwork() {
+
+      if (currentIndex > 0) {
+        currentIndex--;
+        updateViewer();
+      }
+
+    }
+
+    function nextArtwork() {
+
+      if (currentIndex < visibleCards.length - 1) {
+        currentIndex++;
+        updateViewer();
+      }
+
+    }
+
+    previousButton.addEventListener("click", previousArtwork);
+    nextButton.addEventListener("click", nextArtwork);
+
+
+    /* =====================================
+       CLOSE VIEWER
+    ====================================== */
+
     function closeViewer() {
+
+      if (!isViewerOpen) return;
+
+      isViewerOpen = false;
+
       viewer.classList.remove("active");
       viewer.setAttribute("aria-hidden", "true");
+
       document.body.classList.remove("modal-open");
 
-      setTimeout(() => {
-        viewerImage.src = "";
-      }, 350);
+      viewerImage.classList.remove("loaded");
+      viewerImageWrap.classList.remove("loaded");
 
-      if (previousFocus) previousFocus.focus();
+      setTimeout(() => {
+
+        if (!isViewerOpen) {
+          viewerImage.src = "";
+        }
+
+      }, 400);
+
+      if (previousFocus && document.contains(previousFocus)) {
+        previousFocus.focus();
+      }
+
     }
 
     closeButton.addEventListener("click", closeViewer);
 
-    // Close when clicking outside the panel
-    viewer.addEventListener("click", (event) => {
+
+    /* =====================================
+       OUTSIDE CLICK
+    ====================================== */
+
+    viewer.addEventListener("click", event => {
+
       if (event.target === viewer) {
         closeViewer();
       }
+
     });
 
-    // Close with Escape
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape" && viewer.classList.contains("active")) {
+
+    /* =====================================
+       KEYBOARD CONTROLS
+    ====================================== */
+
+    document.addEventListener("keydown", event => {
+
+      if (!isViewerOpen) return;
+
+      if (event.key === "Escape") {
         closeViewer();
       }
+
+      if (event.key === "ArrowLeft") {
+        previousArtwork();
+      }
+
+      if (event.key === "ArrowRight") {
+        nextArtwork();
+      }
+
     });
+
+
+    /* =====================================
+       VIEWER FOCUS MANAGEMENT
+    ====================================== */
+
+    viewer.addEventListener("keydown", event => {
+
+      if (event.key !== "Tab") return;
+
+      const focusable = viewer.querySelectorAll(
+        'button:not(:disabled), [href], [tabindex]:not([tabindex="-1"])'
+      );
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+
+      if (event.shiftKey && document.activeElement === first) {
+
+        event.preventDefault();
+        last.focus();
+
+      } else if (!event.shiftKey && document.activeElement === last) {
+
+        event.preventDefault();
+        first.focus();
+
+      }
+
+    });
+
   </script>
 
 </body>
