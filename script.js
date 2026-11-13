@@ -194,6 +194,7 @@
     function goToStep(n) {
       steps.forEach(function (el, i) {
         el.classList.toggle("active", i === n);
+        el.style.display = i === n ? "flex" : "none";
       });
     }
 
