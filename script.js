@@ -789,7 +789,7 @@ javascript
   }
 
   /* ------------------------------------------------------------
-     7. COUNTDOWN GATE — locks the page until Nov 14, 2026
+     7. COUNTDOWN GATE
      ------------------------------------------------------------ */
   function initCountdownGate() {
     var gate = document.getElementById("countdown-gate");
@@ -806,6 +806,7 @@ javascript
     function reveal() {
       gate.style.transition = "opacity .8s ease";
       gate.style.opacity = "0";
+
       setTimeout(function () {
         gate.remove();
         document.body.classList.remove("cg-locked");
@@ -814,24 +815,38 @@ javascript
 
     function tick() {
       var diff = target - new Date();
+
       if (diff <= 0) {
         clearInterval(timer);
         reveal();
         return;
       }
-      var d = Math.floor(diff / 86400000);
-      var h = Math.floor((diff % 86400000) / 3600000);
-      var m = Math.floor((diff % 3600000) / 60000);
-      var s = Math.floor((diff % 60000) / 1000);
-      if (daysEl) daysEl.textContent = String(d).padStart(2, "0");
-      if (hoursEl) hoursEl.textContent = String(h).padStart(2, "0");
-      if (minsEl) minsEl.textContent = String(m).padStart(2, "0");
-      if (secsEl) secsEl.textContent = String(s).padStart(2, "0");
+
+      if (daysEl) daysEl.textContent = String(Math.floor(diff / 86400000)).padStart(2, "0");
+      if (hoursEl) hoursEl.textContent = String(Math.floor((diff % 86400000) / 3600000)).padStart(2, "0");
+      if (minsEl) minsEl.textContent = String(Math.floor((diff % 3600000) / 60000)).padStart(2, "0");
+      if (secsEl) secsEl.textContent = String(Math.floor((diff % 60000) / 1000)).padStart(2, "0");
     }
 
     tick();
     var timer = setInterval(tick, 1000);
   }
+
+  /* ------------------------------------------------------------
+     INIT
+     ------------------------------------------------------------ */
+  document.addEventListener("DOMContentLoaded", function () {
+    buildStarfield();
+    initNavScroll();
+    initScrollParallax();
+    initWarpTransitions();
+    initWishButton();
+    initScrollReveal();
+    initLetterReveal();
+    initCountdownGate();
+  });
+
+})();
 
   /* ------------------------------------------------------------
      INIT
