@@ -1,449 +1,360 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HBDAYA3</title>
+<meta name="description" content="A little corner of the internet for Amy's birthday.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400;1,500&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add("js");</script>
+<style>
+:root{
+  --void:#05050f;--night-2:#0d0d20;
+  --surface:rgba(255,255,255,.045);--surface-border:rgba(255,255,255,.08);
+  --star:#f6f6fa;--platinum:#cfcfe0;--muted:#8a8aa3;
+  --gold:#c9a84c;--gold-light:#e8c97a;--violet:#7b3fe4;--rose:#e43f6f;
+  --grad-sig:linear-gradient(120deg,var(--gold),var(--rose) 45%,var(--violet));
+  --grad-gold:linear-gradient(135deg,var(--gold-light),var(--gold));
+  --display:'Cormorant Garamond',Georgia,serif;
+  --body:'Inter',system-ui,sans-serif;
+  --ui:'Space Grotesk',system-ui,sans-serif;
+  --silk:cubic-bezier(.19,1,.22,1);
+  --spring:cubic-bezier(.34,1.56,.64,1);
+  --nav-h:76px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--void);color:var(--star);font:300 16px/1.7 var(--body);overflow-x:hidden;min-height:100vh;position:relative}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(ellipse 80% 60% at 50% -10%,rgba(123,63,228,.16),transparent 60%),
+             radial-gradient(ellipse 60% 50% at 90% 10%,rgba(42,92,255,.10),transparent 55%),
+             radial-gradient(ellipse 70% 60% at 10% 90%,rgba(201,168,76,.06),transparent 60%)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:none;cursor:pointer}
+a:focus-visible,button:focus-visible{outline:1px solid var(--gold);outline-offset:4px;border-radius:4px}
+::selection{background:rgba(201,168,76,.35)}
 
-  <title>HBDAYA3</title>
-  <meta name="description" content="A little corner of the internet for Amy's birthday.">
+/* starfield */
+#starfield{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;transition:transform 1.1s var(--silk)}
+.star-dot{position:absolute;border-radius:50%;background:var(--star);opacity:.2;animation:twinkle ease-in-out infinite}
+@keyframes twinkle{0%,100%{opacity:var(--min-op,.15);transform:scale(1)}50%{opacity:var(--max-op,.85);transform:scale(1.3)}}
+.shooting-stars{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:1}
+.shoot{position:absolute;width:2px;height:2px;background:var(--star);border-radius:50%;opacity:0}
+.shoot::before{content:"";position:absolute;top:50%;right:0;width:120px;height:1px;background:linear-gradient(to left,var(--star),transparent);transform:translateY(-50%)}
+.shoot.s1{top:18%;left:12%;animation:shoot 7s ease-in 1.2s infinite}
+.shoot.s2{top:34%;left:62%;animation:shoot 9s ease-in 4.5s infinite}
+.shoot.s3{top:60%;left:30%;animation:shoot 11s ease-in 8s infinite}
+@keyframes shoot{0%{opacity:0;transform:translate(0,0) rotate(-28deg)}4%{opacity:1}16%,100%{opacity:0;transform:translate(-260px,130px) rotate(-28deg)}}
 
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%E2%9C%A6%3C/text%3E%3C/svg%3E">
+/* page fade (used when leaving the page) */
+#fade{position:fixed;inset:0;z-index:9999;background:var(--void);opacity:0;pointer-events:none;transition:opacity .55s ease}
+#fade.on{opacity:1;pointer-events:auto}
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+/* nav */
+#nav{position:fixed;top:0;left:0;right:0;height:var(--nav-h);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(24px,6vw,72px);z-index:500;transition:background .5s,border-color .5s}
+#nav.scrolled{background:rgba(5,5,15,.7);backdrop-filter:blur(18px) saturate(160%);-webkit-backdrop-filter:blur(18px) saturate(160%);border-bottom:1px solid rgba(201,168,76,.1)}
+.nav-logo{font:italic 500 clamp(18px,2vw,22px) var(--display);text-decoration:none}
+.nav-logo span{color:var(--gold);font-style:normal}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.nav-hub,.nav-message{font:500 13px var(--ui);text-decoration:none;padding:11px 24px;border-radius:100px;border:1px solid rgba(255,255,255,.16);transition:border-color .35s,background .35s,transform .35s}
+.nav-hub{border-color:transparent;color:var(--muted)}
+.nav-hub:hover{color:var(--gold-light)}
+.nav-message:hover{background:rgba(201,168,76,.14);border-color:rgba(201,168,76,.45);transform:translateY(-1px)}
 
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,500;1,400;1,500;1,600&family=Inter:wght@300;400;500&family=Space+Grotesk:wght@400;500&display=swap" rel="stylesheet">
+/* hero */
+.hero{position:relative;z-index:2;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:calc(var(--nav-h) + 40px) 24px 80px;overflow:hidden}
+.hero-moon-wrap{position:absolute;top:clamp(64px,12vh,130px);right:clamp(20px,10vw,130px);width:clamp(90px,12vw,160px)}
+.hero-moon{width:100%;display:block;animation:moonFloat 9s ease-in-out infinite;filter:drop-shadow(0 0 40px rgba(243,236,210,.18))}
+@keyframes moonFloat{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-14px) rotate(1.5deg)}}
+.hero-content{position:relative;z-index:3;text-align:center;max-width:720px}
+.hero-eyebrow{font:italic 400 clamp(14px,1.6vw,17px) var(--display);color:var(--platinum);margin-bottom:22px}
+.hero-title{font-family:var(--display);font-weight:300;line-height:1.02;margin-bottom:26px}
+.hero-title .line{display:block;font-size:clamp(38px,6.5vw,74px)}
+.hero-title .name{font-style:italic;font-weight:500;font-size:clamp(64px,11vw,140px);background:var(--grad-gold);background-size:200% auto;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 6s ease-in-out infinite}
+@keyframes shimmer{0%,100%{background-position:0 center}50%{background-position:100% center}}
+.hero-subtitle{font-size:clamp(14px,1.5vw,17px);color:var(--muted);max-width:420px;margin:0 auto 44px}
+.wish-instruction{font:italic 400 clamp(14px,1.5vw,16px) var(--display);color:var(--gold-light);margin-bottom:22px}
 
-  <!-- Main stylesheet -->
-  <link rel="stylesheet" href="./style.css">
+/* hero entrance: one orchestrated moment */
+.js .hero-eyebrow,.js .hero-title .line,.js .hero-subtitle,.js .wish-instruction,.js .wish-stage{opacity:0;transform:translateY(18px);filter:blur(6px);animation:fadeUp 1.2s var(--silk) forwards}
+.js .hero-eyebrow{animation-delay:.2s}
+.js .hero-title .line{animation-delay:.45s}
+.js .hero-title .name{animation:fadeUp 1.2s var(--silk) .7s forwards,shimmer 6s ease-in-out 2s infinite}
+.js .hero-subtitle{animation-delay:1s}
+.js .wish-instruction{animation-delay:1.2s}
+.js .wish-stage{animation-delay:1.4s}
+@keyframes fadeUp{to{opacity:1;transform:none;filter:blur(0)}}
 
-  <!-- Fallback: content must remain visible without JavaScript -->
-  <style>
-    #warp-overlay {
-      opacity: 0 !important;
-      pointer-events: none !important;
-    }
+/* wish */
+.wish-stage{display:grid;justify-items:center;min-height:110px}
+.wish-step{display:none;flex-direction:column;align-items:center;gap:16px}
+.wish-step.active{display:flex;animation:stepIn .5s var(--silk)}
+@keyframes stepIn{from{opacity:0;transform:translateY(10px) scale(.97)}to{opacity:1;transform:none}}
+.wish-btn,.wish-confirm-btn{display:inline-flex;align-items:center;gap:10px;font:500 13px var(--ui);padding:15px 38px;border-radius:100px;transition:transform .4s var(--spring),box-shadow .4s,background .4s}
+.wish-btn{color:var(--void);background:var(--grad-gold);box-shadow:0 18px 50px rgba(201,168,76,.18)}
+.wish-btn:hover{transform:translateY(-3px);box-shadow:0 22px 60px rgba(201,168,76,.32)}
+.wish-check{font:italic 400 clamp(16px,1.8vw,19px) var(--display);color:var(--platinum);white-space:pre-line;max-width:420px}
+.wish-confirm-row{display:flex;gap:14px;flex-wrap:wrap;justify-content:center}
+.wish-confirm-btn{padding:12px 26px;font-size:12px;border:1px solid rgba(255,255,255,.18)}
+.wish-confirm-btn.yes{border-color:rgba(201,168,76,.4)}
+.wish-confirm-btn.yes:hover{background:rgba(201,168,76,.14);transform:translateY(-2px)}
+.wish-confirm-btn.no:hover{background:rgba(255,255,255,.06);transform:translateY(-2px)}
+.wish-response{font:italic 400 clamp(16px,1.8vw,20px) var(--display);color:var(--gold-light);max-width:360px}
 
-    .reveal,
-    .reveal-scale,
-    .wishes-list li,
-    .note-grid .note-card {
-      opacity: 1 !important;
-      transform: none !important;
-      filter: none !important;
-    }
-  </style>
+.hero-scroll-cue{position:absolute;bottom:36px;left:50%;transform:translateX(-50%)}
+.hero-scroll-cue span{display:block;width:1px;height:54px;background:linear-gradient(to bottom,var(--gold),transparent);animation:scrollLine 2.2s ease-in-out infinite}
+@keyframes scrollLine{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.35;transform:scaleY(.6)}}
 
-  <!-- Main JavaScript -->
-  <script src="./script.js" defer></script>
+/* reveal (only hidden when JS is running) */
+.js .reveal{opacity:0;transform:translateY(30px);filter:blur(6px);transition:opacity 1s var(--silk),transform 1s var(--silk),filter 1s var(--silk)}
+.js .reveal.visible{opacity:1;transform:none;filter:blur(0)}
+.delay-1{transition-delay:.1s!important}.delay-2{transition-delay:.2s!important}.delay-3{transition-delay:.32s!important}
+
+.lead{font:italic 400 clamp(20px,2.4vw,28px) var(--display);color:var(--platinum);text-align:center}
+
+/* wishes */
+.wishes{position:relative;z-index:2;max-width:640px;margin:0 auto;padding:100px 24px 140px}
+.wishes .lead{margin-bottom:56px}
+.wishes-list{list-style:none;display:flex;flex-direction:column;gap:36px}
+.wishes-list li{display:grid;grid-template-columns:28px 1fr;gap:18px;align-items:start}
+.wish-mark{font-size:16px;color:var(--gold);line-height:1.8}
+.wishes-list p{font-size:clamp(15px,1.4vw,17px);line-height:1.8;color:var(--star)}
+
+/* from me */
+.from-me{position:relative;z-index:2;max-width:620px;margin:0 auto;padding:0 24px 140px;text-align:center}
+.from-me .lead{margin-bottom:32px}
+.from-me p:not(.lead){font-size:clamp(15px,1.4vw,17px);line-height:1.9;margin-bottom:20px}
+.from-me .from-me-sign{margin-top:24px;font:italic 400 clamp(16px,1.8vw,19px) var(--display);color:var(--gold)}
+
+/* notes */
+.little-things{position:relative;z-index:2;max-width:980px;margin:0 auto;padding:0 24px 140px}
+.little-things .lead{margin-bottom:56px}
+.note-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:28px}
+.note-card{background:var(--surface);border:1px solid var(--surface-border);border-radius:14px;padding:28px 24px;transform:rotate(var(--tilt,-2deg));transition:transform .5s var(--spring),border-color .4s,box-shadow .4s}
+.note-card:hover{transform:rotate(0) translateY(-6px);border-color:rgba(201,168,76,.28);box-shadow:0 24px 60px rgba(0,0,0,.35)}
+.note-card p{font-size:14px;color:var(--platinum);line-height:1.75}
+.note-card:nth-child(1){--tilt:-2.4deg}.note-card:nth-child(2){--tilt:1.6deg}.note-card:nth-child(3){--tilt:-1deg}.note-card:nth-child(4){--tilt:2.2deg}
+
+/* message cta */
+.message-cta{position:relative;z-index:2;max-width:560px;margin:0 auto;padding:0 24px 140px;text-align:center}
+.message-cta .lead{margin-bottom:14px}
+.message-cta p.sub{font-size:14px;color:var(--muted);margin-bottom:34px}
+.message-cta-btn{display:inline-flex;align-items:center;gap:12px;font:500 13px var(--ui);text-decoration:none;border:1px solid rgba(255,255,255,.18);padding:16px 40px;border-radius:100px;transition:border-color .4s,background .4s,transform .4s}
+.message-cta-btn:hover{border-color:rgba(201,168,76,.5);background:rgba(201,168,76,.12);transform:translateY(-3px)}
+
+#footer{position:relative;z-index:2;text-align:center;padding:60px 24px 80px;border-top:1px solid rgba(255,255,255,.06)}
+.footer-line{font-size:14px;color:var(--muted)}
+
+@media(max-width:640px){.hero-moon-wrap{width:80px;top:90px;right:20px}.nav-hub{padding:11px 14px}}
+@media(prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;scroll-behavior:auto!important}
+  .js .hero-eyebrow,.js .hero-title .line,.js .hero-subtitle,.js .wish-instruction,.js .wish-stage,.js .reveal{opacity:1!important;transform:none!important;filter:none!important}
+}
+</style>
 </head>
-
 <body>
 
-  <!-- ==========================================
-       WARP TRANSITION
-  =========================================== -->
+<div id="fade" aria-hidden="true"></div>
+<div id="starfield" aria-hidden="true"></div>
 
-  <div id="warp-overlay" class="hidden" aria-hidden="true">
-    <div class="warp-field" id="warp-field"></div>
+<nav id="nav">
+  <a href="./index.html" class="nav-logo">Amy <span>✦</span></a>
+  <div class="nav-actions">
+    <a href="https://articembers.github.io/amybdayglobal/" class="nav-hub">Hub</a>
+    <a href="./message.html" class="nav-message" data-leave>Message</a>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="shooting-stars" aria-hidden="true"><span class="shoot s1"></span><span class="shoot s2"></span><span class="shoot s3"></span></div>
+
+  <div class="hero-moon-wrap" id="moon">
+    <svg class="hero-moon" viewBox="0 0 200 200" aria-hidden="true">
+      <defs>
+        <radialGradient id="moonGlow" cx="35%" cy="30%" r="75%">
+          <stop offset="0%" stop-color="#fbf6e3"/><stop offset="55%" stop-color="#f3ecd2"/><stop offset="100%" stop-color="#cbb877"/>
+        </radialGradient>
+        <filter id="moonBlur" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="1.2"/></filter>
+      </defs>
+      <circle cx="100" cy="100" r="82" fill="url(#moonGlow)"/>
+      <circle cx="70" cy="70" r="14" fill="#d9c98f" opacity=".5" filter="url(#moonBlur)"/>
+      <circle cx="120" cy="95" r="9" fill="#d9c98f" opacity=".4" filter="url(#moonBlur)"/>
+      <circle cx="95" cy="135" r="18" fill="#d9c98f" opacity=".35" filter="url(#moonBlur)"/>
+      <circle cx="135" cy="60" r="6" fill="#d9c98f" opacity=".4" filter="url(#moonBlur)"/>
+    </svg>
   </div>
 
-  <!-- ==========================================
-       AMBIENT STARFIELD
-  =========================================== -->
+  <div class="hero-content">
+    <p class="hero-eyebrow">Hopefully you'll have a great day and birthday today,</p>
+    <h1 class="hero-title">
+      <span class="line">Happy birthday,</span>
+      <span class="line name">Amy</span>
+    </h1>
+    <p class="hero-subtitle">One more spiny around the sun is done. Today's the part u get older and closer from being a granny!1</p>
 
-  <div id="starfield" aria-hidden="true"></div>
+    <p class="wish-instruction">Close your eyes and make a wish first, press the button afterward.</p>
 
-  <!-- ==========================================
-       NAVIGATION
-  =========================================== -->
-
-  <nav id="nav">
-
-    <a href="./index.html" class="nav-logo">
-      Amy <span>✦</span>
-    </a>
-
-    <div class="nav-actions">
-
-      <a
-        href="https://articembers.github.io/amybdayglobal/"
-        class="nav-hub"
-      >
-        Hub
-      </a>
-
-      <a
-        href="./message.html"
-        class="nav-message"
-        data-transition
-      >
-        Message
-      </a>
-
-    </div>
-
-  </nav>
-
-  <!-- ==========================================
-       HAPPY BIRTHDAY HERO
-  =========================================== -->
-
-  <header class="hero">
-
-    <!-- Shooting stars -->
-
-    <div class="shooting-stars" aria-hidden="true">
-      <span class="shoot s1"></span>
-      <span class="shoot s2"></span>
-      <span class="shoot s3"></span>
-    </div>
-
-    <!-- Moon -->
-
-    <div class="hero-moon-wrap" id="moon-parallax">
-
-      <svg
-        class="hero-moon"
-        viewBox="0 0 200 200"
-        aria-hidden="true"
-      >
-
-        <defs>
-
-          <radialGradient
-            id="moonGlow"
-            cx="35%"
-            cy="30%"
-            r="75%"
-          >
-            <stop offset="0%" stop-color="#fbf6e3"/>
-            <stop offset="55%" stop-color="#f3ecd2"/>
-            <stop offset="100%" stop-color="#cbb877"/>
-          </radialGradient>
-
-          <filter
-            id="moonBlur"
-            x="-50%"
-            y="-50%"
-            width="200%"
-            height="200%"
-          >
-            <feGaussianBlur stdDeviation="1.2"/>
-          </filter>
-
-        </defs>
-
-        <circle
-          cx="100"
-          cy="100"
-          r="82"
-          fill="url(#moonGlow)"
-        />
-
-        <circle
-          cx="70"
-          cy="70"
-          r="14"
-          fill="#d9c98f"
-          opacity="0.5"
-          filter="url(#moonBlur)"
-        />
-
-        <circle
-          cx="120"
-          cy="95"
-          r="9"
-          fill="#d9c98f"
-          opacity="0.4"
-          filter="url(#moonBlur)"
-        />
-
-        <circle
-          cx="95"
-          cy="135"
-          r="18"
-          fill="#d9c98f"
-          opacity="0.35"
-          filter="url(#moonBlur)"
-        />
-
-        <circle
-          cx="135"
-          cy="60"
-          r="6"
-          fill="#d9c98f"
-          opacity="0.4"
-          filter="url(#moonBlur)"
-        />
-
-      </svg>
-
-    </div>
-
-    <!-- Hero content -->
-
-    <div class="hero-content">
-
-      <p class="hero-eyebrow">
-        Hopefully you'll have a great day and birthday today,
-      </p>
-
-      <h1 class="hero-title">
-
-        <span class="line">
-          Happy birthday,
-        </span>
-
-        <span class="line name">
-          Amy
-        </span>
-
-      </h1>
-
-      <p class="hero-subtitle">
-        One more spiny around the sun is done.
-        Today's the part u get older and closer
-        from being a granny!1
-      </p>
-
-      <!-- ======================================
-           WISH INTERACTION
-      ======================================= -->
-
-      <p class="wish-instruction">
-        Close your eyes and make a wish first,
-        press the button afterward.
-      </p>
-
-      <div class="wish-stage" id="wish-stage">
-
-        <!-- Step 1 -->
-
-        <div class="wish-step active">
-
-          <button
-            id="wish-btn"
-            class="wish-btn"
-            type="button"
-          >
-            I've made my wish ✦
-          </button>
-
+    <div class="wish-stage" id="wish-stage">
+      <div class="wish-step active">
+        <button id="wish-btn" class="wish-btn" type="button">I've made my wish ✦</button>
+      </div>
+      <div class="wish-step">
+        <p class="wish-check" id="wish-check">Did you actually make it, though?</p>
+        <div class="wish-confirm-row">
+          <button class="wish-confirm-btn yes" type="button">Yes, I made the wish</button>
+          <button class="wish-confirm-btn no" type="button">Give me a second</button>
         </div>
-
-        <!-- Step 2 -->
-
-        <div class="wish-step">
-
-          <p class="wish-check">
-            Did you actually make it, though?
-          </p>
-
-          <div class="wish-confirm-row">
-
-            <button
-              class="wish-confirm-btn yes"
-              type="button"
-            >
-              Yes, I made the wish
-            </button>
-
-            <button
-              class="wish-confirm-btn no"
-              type="button"
-            >
-              Give me a second
-            </button>
-
-          </div>
-
-        </div>
-
-        <!-- Step 3 -->
-
-        <div class="wish-step">
-
-          <p
-            id="wish-response"
-            class="wish-response"
-            aria-live="polite"
-          ></p>
-
-        </div>
-
       </div>
-
+      <div class="wish-step">
+        <p id="wish-response" class="wish-response" aria-live="polite"></p>
+      </div>
     </div>
+  </div>
 
-    <!-- Scroll indicator -->
+  <div class="hero-scroll-cue" aria-hidden="true"><span></span></div>
+</header>
 
-    <div class="hero-scroll-cue" aria-hidden="true">
-      <span></span>
-    </div>
+<section class="wishes">
+  <p class="lead reveal">Three small wishes:</p>
+  <ul class="wishes-list">
+    <li class="reveal"><span class="wish-mark">✦</span><p>I hope u got the stuffs u wanted this year, or that u wished for.</p></li>
+    <li class="reveal"><span class="wish-mark">✦</span><p>Hopefully ur friends quit being faking deaths or just saying shit so that ur friendships gets better.</p></li>
+    <li class="reveal"><span class="wish-mark">✦</span><p>Hopefully u find someone to date, at least you'll stop being jealous of ur friends xD.</p></li>
+  </ul>
+</section>
 
-  </header>
+<section class="from-me">
+  <p class="lead reveal">A little something from me</p>
+  <p class="reveal delay-1">I don't say this enough or show it, but I'm genuinely glad we ended up in each other's lives.</p>
+  <p class="reveal delay-2">Hope you'll have a great birthday and a better year from now on, and also for next year.</p>
+  <p class="from-me-sign reveal delay-3">Happy birthday, Amy.</p>
+</section>
 
-  <!-- ==========================================
-       THREE WISHES
-  =========================================== -->
+<section class="little-things">
+  <p class="lead reveal">A few small things, for no particular reason</p>
+  <div class="note-grid">
+    <div class="note-card reveal"><p>Quit getting urself burnt at the beach monke.</p></div>
+    <div class="note-card reveal delay-1"><p>Just eat more chocolate if u want to shit easier it gives diarhea.</p></div>
+    <div class="note-card reveal delay-2"><p>Drink something with cranberry when ur on period instead of just saying u cant walk kaka.</p></div>
+    <div class="note-card reveal delay-3"><p>This is your official reminder that you still tight as u also alway remnid me.</p></div>
+  </div>
+</section>
 
-  <section class="wishes">
+<section class="message-cta">
+  <p class="lead reveal">There's a bit more</p>
+  <p class="sub reveal delay-1">One more thing, its waiting for you on the other side.</p>
+  <a href="./message.html" class="message-cta-btn reveal delay-2" data-leave>
+    <span>Open the message</span><span aria-hidden="true">→</span>
+  </a>
+</section>
 
-    <p class="wishes-lead reveal visible">
-      Three small wishes:
-    </p>
+<footer id="footer">
+  <p class="footer-line">Made with love (and headaches), for you.</p>
+</footer>
 
-    <ul class="wishes-list">
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function (id) { return document.getElementById(id); };
 
-      <li class="visible">
+  /* starfield */
+  var field = $("starfield"), mx = 0, my = 0, sy = 0;
+  function moveField() { field.style.transform = "translate(" + mx + "px," + (my + sy) + "px)"; }
+  var n = window.innerWidth < 640 ? 70 : 140, frag = document.createDocumentFragment();
+  for (var i = 0; i < n; i++) {
+    var s = document.createElement("span"), size = (Math.random() * 1.8 + 0.6).toFixed(2);
+    s.className = "star-dot";
+    s.style.cssText = "width:" + size + "px;height:" + size + "px;top:" + (Math.random() * 100).toFixed(2) +
+      "%;left:" + (Math.random() * 100).toFixed(2) + "%;animation-duration:" + (Math.random() * 3.5 + 2.5).toFixed(2) +
+      "s;animation-delay:" + (Math.random() * 5).toFixed(2) + "s;--min-op:" + (Math.random() * 0.2 + 0.08).toFixed(2) +
+      ";--max-op:" + (Math.random() * 0.5 + 0.5).toFixed(2);
+    frag.appendChild(s);
+  }
+  field.appendChild(frag);
+  if (!reduce && window.matchMedia("(pointer: fine)").matches) {
+    window.addEventListener("mousemove", function (e) {
+      mx = (e.clientX / window.innerWidth - 0.5) * 12;
+      my = (e.clientY / window.innerHeight - 0.5) * 12;
+      moveField();
+    });
+  }
 
-        <span class="wish-mark">✦</span>
+  /* nav + parallax */
+  var nav = $("nav"), moon = $("moon"), ticking = false;
+  function onScroll() {
+    var y = window.scrollY;
+    nav.classList.toggle("scrolled", y > 40);
+    if (!reduce) {
+      moon.style.transform = "translateY(" + y * 0.18 + "px)";
+      sy = y * 0.06;
+      moveField();
+    }
+    ticking = false;
+  }
+  window.addEventListener("scroll", function () {
+    if (!ticking) { requestAnimationFrame(onScroll); ticking = true; }
+  }, { passive: true });
+  onScroll();
 
-        <p>
-          I hope u got the stuffs u wanted this year,
-          or that u wished for.
-        </p>
+  /* wish: 3 steps */
+  var steps = document.querySelectorAll("#wish-stage .wish-step");
+  var check = $("wish-check"), response = $("wish-response");
+  var defaultCheck = check.textContent, back = null;
+  var wishes = [
+    "Wish sent, the sky keeps it for you now.",
+    "Noted, by the nearest star.",
+    "That one's already on its way, you'll just have to be patient.",
+    "Granted. Probably, but the universe is a little slow sometimes."
+  ];
+  function go(k) {
+    for (var j = 0; j < steps.length; j++) steps[j].classList.toggle("active", j === k);
+  }
+  function stopBack() { if (back) { clearTimeout(back); back = null; } }
 
-      </li>
+  $("wish-btn").addEventListener("click", function () {
+    stopBack(); check.textContent = defaultCheck; go(1);
+  });
+  document.querySelector(".wish-confirm-btn.yes").addEventListener("click", function () {
+    stopBack();
+    response.textContent = wishes[Math.floor(Math.random() * wishes.length)];
+    go(2);
+  });
+  document.querySelector(".wish-confirm-btn.no").addEventListener("click", function () {
+    check.textContent = "Take a second, close your eyes, then press it again.\n\n" +
+      "(Also, go goon, at least u clear ur mind for a fully focused wish after <3, Anyways.)";
+    stopBack();
+    back = setTimeout(function () { go(0); back = null; }, 4500);
+  });
 
-      <li class="visible">
+  /* scroll reveal */
+  var items = document.querySelectorAll(".reveal");
+  if (reduce || !("IntersectionObserver" in window)) {
+    items.forEach(function (el) { el.classList.add("visible"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("visible"); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.15 });
+    items.forEach(function (el) { io.observe(el); });
+  }
 
-        <span class="wish-mark">✦</span>
-
-        <p>
-          Hopefully ur friends quit being faking deaths
-          or just saying shit so that ur friendships gets better.
-        </p>
-
-      </li>
-
-      <li class="visible">
-
-        <span class="wish-mark">✦</span>
-
-        <p>
-          Hopefully u find someone to date,
-          at least you'll stop being jealous of ur friends xD.
-        </p>
-
-      </li>
-
-    </ul>
-
-  </section>
-
-  <!-- ==========================================
-       SOMETHING FROM ME
-  =========================================== -->
-
-  <section class="from-me">
-
-    <p class="from-me-lead reveal visible">
-      A little something from me
-    </p>
-
-    <p class="reveal visible delay-1">
-      I don't say this enough or show it,
-      but I'm genuinely glad we ended up
-      in each other's lives.
-    </p>
-
-    <p class="reveal visible delay-2">
-      Hope you'll have a great birthday and
-      a better year from now on, and also for next year.
-    </p>
-
-    <p class="from-me-sign reveal visible delay-3">
-      Happy birthday, Amy.
-    </p>
-
-  </section>
-
-  <!-- ==========================================
-       LITTLE THINGS
-  =========================================== -->
-
-  <section class="little-things">
-
-    <p class="little-things-lead reveal visible">
-      A few small things, for no particular reason
-    </p>
-
-    <div class="note-grid">
-
-      <div class="note-card visible">
-        <p>
-          Quit getting urself burnt at the beach monke.
-        </p>
-      </div>
-
-      <div class="note-card visible">
-        <p>
-          Just eat more chocolate if u want to shit easier
-          it gives diarhea.
-        </p>
-      </div>
-
-      <div class="note-card visible">
-        <p>
-          Drink something with cranberry when ur on period
-          instead of just saying u cant walk kaka.
-        </p>
-      </div>
-
-      <div class="note-card visible">
-        <p>
-          This is your official reminder that you still tight
-          as u also alway remnid me.
-        </p>
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- ==========================================
-       MESSAGE CALL TO ACTION
-  =========================================== -->
-
-  <section class="message-cta">
-
-    <p class="message-cta-eyebrow reveal-scale visible">
-      There's a bit more
-    </p>
-
-    <p class="reveal-scale visible delay-1">
-      One more thing, its waiting for you on the other side.
-    </p>
-
-    <a
-      href="./message.html"
-      class="message-cta-btn reveal-scale visible delay-2"
-      data-transition
-    >
-
-      <span>Open the message</span>
-
-      <span aria-hidden="true">→</span>
-
-    </a>
-
-  </section>
-
-  <!-- ==========================================
-       FOOTER
-  =========================================== -->
-
-  <footer id="footer">
-
-    <p class="footer-line">
-      Made with love (and headaches), for you.
-    </p>
-
-  </footer>
-
+  /* fade out when leaving to message.html */
+  var fade = $("fade");
+  document.querySelectorAll("[data-leave]").forEach(function (a) {
+    a.addEventListener("click", function (e) {
+      if (e.ctrlKey || e.metaKey || e.shiftKey || e.altKey || reduce) return;
+      e.preventDefault();
+      fade.classList.add("on");
+      setTimeout(function () { window.location.href = a.getAttribute("href"); }, 520);
+    });
+  });
+  window.addEventListener("pageshow", function (e) { if (e.persisted) fade.classList.remove("on"); });
+})();
+</script>
 </body>
 </html>
