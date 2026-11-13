@@ -1,0 +1,799 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090a16">
+  <title>HBDAYAG — Art Gallery</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --background: #090a16;
+      --surface: #111322;
+      --surface-light: #191b2d;
+      --text: #f3f0f8;
+      --muted: #9293a9;
+      --gold: #d8bd8a;
+      --violet: #a99ad8;
+      --border: rgba(255,255,255,0.09);
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      min-height: 100vh;
+      overflow-x: hidden;
+      background: var(--background);
+      color: var(--text);
+      font-family: "DM Sans", sans-serif;
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    /* BACKGROUND */
+
+    .background-glow {
+      position: fixed;
+      inset: 0;
+      z-index: -2;
+      pointer-events: none;
+      background:
+        radial-gradient(ellipse at 15% 15%, rgba(116, 94, 171, 0.13), transparent 42%),
+        radial-gradient(ellipse at 85% 80%, rgba(177, 142, 106, 0.08), transparent 40%);
+    }
+
+    .stars {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .star {
+      position: absolute;
+      width: 2px;
+      height: 2px;
+      border-radius: 50%;
+      background: #fff;
+      opacity: 0.4;
+      animation: twinkle 4s ease-in-out infinite alternate;
+    }
+
+    @keyframes twinkle {
+      from { opacity: 0.15; transform: scale(0.8); }
+      to { opacity: 0.8; transform: scale(1.3); }
+    }
+
+    /* NAVIGATION */
+
+    .topbar {
+      width: min(1200px, calc(100% - 48px));
+      height: 85px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      color: var(--text);
+      text-decoration: none;
+      font-family: "Playfair Display", serif;
+      font-size: 1.15rem;
+      letter-spacing: 2px;
+    }
+
+    .brand span {
+      color: var(--gold);
+    }
+
+    .back-link {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.25s;
+    }
+
+    .back-link:hover {
+      color: var(--gold);
+    }
+
+    /* INTRO */
+
+    .intro {
+      width: min(1200px, calc(100% - 48px));
+      margin: auto;
+      padding: 90px 0 55px;
+    }
+
+    .eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+    }
+
+    .eyebrow::before {
+      content: "";
+      width: 28px;
+      height: 1px;
+      background: var(--gold);
+    }
+
+    .intro h1 {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(3rem, 7vw, 5.5rem);
+      line-height: 1.08;
+      font-weight: 400;
+      letter-spacing: -2px;
+    }
+
+    .intro h1 span {
+      color: var(--gold);
+      font-style: italic;
+    }
+
+    .intro-description {
+      max-width: 510px;
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+      line-height: 1.8;
+    }
+
+    .gallery-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 48px;
+      padding-bottom: 15px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .gallery-meta h2 {
+      font-size: 0.75rem;
+      font-weight: 500;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .art-count {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    /* ARTWORK GRID */
+
+    .gallery {
+      width: min(1200px, calc(100% - 48px));
+      margin: 0 auto 110px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .art-card {
+      position: relative;
+      min-width: 0;
+      height: 390px;
+      overflow: hidden;
+      isolation: isolate;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: var(--surface);
+      cursor: pointer;
+      text-align: left;
+      color: var(--text);
+      animation: cardAppear 0.7s ease both;
+    }
+
+    .art-card:nth-child(2) { animation-delay: 0.08s; }
+    .art-card:nth-child(3) { animation-delay: 0.16s; }
+    .art-card:nth-child(4) { animation-delay: 0.24s; }
+    .art-card:nth-child(5) { animation-delay: 0.32s; }
+    .art-card:nth-child(6) { animation-delay: 0.4s; }
+
+    @keyframes cardAppear {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .art-card img {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.7s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .art-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(
+        to top,
+        rgba(5, 6, 15, 0.95) 0%,
+        rgba(5, 6, 15, 0.35) 38%,
+        rgba(5, 6, 15, 0.03) 75%
+      );
+      transition: opacity 0.35s;
+    }
+
+    .art-card:hover img {
+      transform: scale(1.07);
+    }
+
+    .art-card:hover {
+      border-color: rgba(216,189,138,0.5);
+    }
+
+    .art-card-content {
+      position: absolute;
+      right: 22px;
+      bottom: 22px;
+      left: 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .art-category {
+      color: var(--gold);
+      font-size: 0.65rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .art-title {
+      font-family: "Playfair Display", serif;
+      font-size: 1.55rem;
+      font-weight: 400;
+    }
+
+    .art-open {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border: 1px solid rgba(255,255,255,0.35);
+      border-radius: 50%;
+      background: rgba(10,10,20,0.3);
+      color: white;
+      font-size: 1.1rem;
+      backdrop-filter: blur(8px);
+      transition: background 0.25s, color 0.25s;
+    }
+
+    .art-card:hover .art-open {
+      background: var(--gold);
+      color: #15131a;
+    }
+
+    /* VIEWER */
+
+    .viewer {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 35px;
+      background: rgba(5, 5, 13, 0.88);
+      backdrop-filter: blur(14px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s, visibility 0.35s;
+    }
+
+    .viewer.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .viewer-panel {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      width: min(1100px, 100%);
+      max-height: 85vh;
+      min-height: 500px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--surface);
+      box-shadow: 0 30px 100px rgba(0,0,0,0.5);
+      transform: translateY(20px) scale(0.98);
+      transition: transform 0.4s cubic-bezier(.2,.7,.2,1);
+    }
+
+    .viewer.active .viewer-panel {
+      transform: translateY(0) scale(1);
+    }
+
+    .viewer-image-wrap {
+      position: relative;
+      min-height: 500px;
+      overflow: hidden;
+      background: #080912;
+    }
+
+    .viewer-image {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      object-fit: contain;
+      padding: 15px;
+    }
+
+    .viewer-info {
+      display: flex;
+      flex-direction: column;
+      padding: 65px 48px 45px;
+      overflow-y: auto;
+    }
+
+    .viewer-number {
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .viewer-title {
+      font-family: "Playfair Display", serif;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.2;
+      font-weight: 400;
+    }
+
+    .viewer-divider {
+      width: 45px;
+      height: 1px;
+      margin: 28px 0;
+      background: var(--gold);
+    }
+
+    .viewer-description {
+      color: #b4b3c4;
+      font-size: 0.93rem;
+      line-height: 2;
+      white-space: pre-line;
+    }
+
+    .viewer-category {
+      margin-top: auto;
+      padding-top: 35px;
+      color: var(--gold);
+      font-size: 0.7rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .close-viewer {
+      position: absolute;
+      top: 17px;
+      right: 17px;
+      z-index: 5;
+      width: 40px;
+      height: 40px;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--border);
+      border-radius: 50%;
+      background: rgba(10,10,20,0.7);
+      color: white;
+      font-size: 1.4rem;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .close-viewer:hover {
+      background: var(--gold);
+      color: #111;
+    }
+
+    /* FOOTER */
+
+    footer {
+      width: min(1200px, calc(100% - 48px));
+      margin: auto;
+      padding: 30px 0 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    footer span {
+      color: var(--gold);
+    }
+
+    /* RESPONSIVE */
+
+    @media (max-width: 900px) {
+      .gallery {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .art-card {
+        height: 340px;
+      }
+
+      .viewer-panel {
+        grid-template-columns: 1fr 0.9fr;
+      }
+
+      .viewer-info {
+        padding: 60px 28px 30px;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .topbar {
+        height: 70px;
+      }
+
+      .intro {
+        padding-top: 65px;
+      }
+
+      .gallery {
+        grid-template-columns: 1fr;
+        gap: 14px;
+      }
+
+      .art-card {
+        height: 420px;
+      }
+
+      .viewer {
+        padding: 15px;
+      }
+
+      .viewer-panel {
+        display: flex;
+        flex-direction: column;
+        max-height: 92vh;
+        min-height: 0;
+        overflow-y: auto;
+      }
+
+      .viewer-image-wrap {
+        flex: none;
+        min-height: 0;
+        height: 48vh;
+      }
+
+      .viewer-info {
+        flex: none;
+        padding: 30px 25px;
+        overflow: visible;
+      }
+
+      .viewer-number {
+        margin-bottom: 12px;
+      }
+
+      .viewer-divider {
+        margin: 18px 0;
+      }
+
+      .viewer-category {
+        padding-top: 25px;
+      }
+
+      footer {
+        gap: 15px;
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="background-glow"></div>
+  <div class="stars" id="stars"></div>
+
+  <!-- NAVIGATION -->
+  <header class="topbar">
+    <a href="index.html" class="brand">HBDAY<span>AG</span></a>
+    <a href="index.html" class="back-link">← Back to birthday page</a>
+  </header>
+
+  <!-- INTRODUCTION -->
+  <section class="intro">
+    <div class="eyebrow">A little collection</div>
+
+    <h1>
+      An archive of<br>
+      <span>her creations.</span>
+    </h1>
+
+    <p class="intro-description">
+      Every piece tells a story, captures a moment, or brings an idea to life.
+      Here's a little space dedicated to the things she creates.
+    </p>
+
+    <div class="gallery-meta">
+      <h2>Selected artworks</h2>
+      <span class="art-count" id="art-count">06 pieces</span>
+    </div>
+  </section>
+
+  <!-- GALLERY GRID -->
+  <main class="gallery" id="gallery">
+
+    <!-- ARTWORK 01 -->
+    <button class="art-card"
+      data-image="artworks/artwork-01.jpg"
+      data-title="Artwork title"
+      data-category="Illustration"
+      data-description="Write the description of this artwork here. You can explain what inspired it, what it represents, or simply leave a little message about it.">
+
+      <img src="artworks/artwork-01.jpg" alt="Artwork 1">
+      <span class="art-open">↗</span>
+      <span class="art-card-content">
+        <span class="art-category">Illustration</span>
+        <span class="art-title">Artwork title</span>
+      </span>
+    </button>
+
+    <!-- ARTWORK 02 -->
+    <button class="art-card"
+      data-image="artworks/artwork-02.jpg"
+      data-title="A different world"
+      data-category="Digital art"
+      data-description="Add a little description here. Tell the story behind this piece or what makes it special.">
+
+      <img src="artworks/artwork-02.jpg" alt="Artwork 2">
+      <span class="art-open">↗</span>
+      <span class="art-card-content">
+        <span class="art-category">Digital art</span>
+        <span class="art-title">A different world</span>
+      </span>
+    </button>
+
+    <!-- ARTWORK 03 -->
+    <button class="art-card"
+      data-image="artworks/artwork-03.jpg"
+      data-title="Untitled"
+      data-category="Sketch"
+      data-description="A description for this artwork goes here.">
+
+      <img src="artworks/artwork-03.jpg" alt="Artwork 3">
+      <span class="art-open">↗</span>
+      <span class="art-card-content">
+        <span class="art-category">Sketch</span>
+        <span class="art-title">Untitled</span>
+      </span>
+    </button>
+
+    <!-- ARTWORK 04 -->
+    <button class="art-card"
+      data-image="artworks/artwork-04.jpg"
+      data-title="Little details"
+      data-category="Painting"
+      data-description="A few words about this painting.">
+
+      <img src="artworks/artwork-04.jpg" alt="Artwork 4">
+      <span class="art-open">↗</span>
+      <span class="art-card-content">
+        <span class="art-category">Painting</span>
+        <span class="art-title">Little details</span>
+      </span>
+    </button>
+
+    <!-- ARTWORK 05 -->
+    <button class="art-card"
+      data-image="artworks/artwork-05.jpg"
+      data-title="Somewhere in time"
+      data-category="Digital art"
+      data-description="Add the story or description of this piece here.">
+
+      <img src="artworks/artwork-05.jpg" alt="Artwork 5">
+      <span class="art-open">↗</span>
+      <span class="art-card-content">
+        <span class="art-category">Digital art</span>
+        <span class="art-title">Somewhere in time</span>
+      </span>
+    </button>
+
+    <!-- ARTWORK 06 -->
+    <button class="art-card"
+      data-image="artworks/artwork-06.jpg"
+      data-title="Another creation"
+      data-category="Illustration"
+      data-description="Every creation deserves its own little space. Write something here.">
+
+      <img src="artworks/artwork-06.jpg" alt="Artwork 6">
+      <span class="art-open">↗</span>
+      <span class="art-card-content">
+        <span class="art-category">Illustration</span>
+        <span class="art-title">Another creation</span>
+      </span>
+    </button>
+
+  </main>
+
+  <!-- ARTWORK VIEWER -->
+  <div class="viewer" id="viewer" aria-hidden="true">
+
+    <div class="viewer-panel" role="dialog" aria-modal="true" aria-labelledby="viewer-title">
+
+      <button class="close-viewer" id="close-viewer" aria-label="Close artwork viewer">
+        ×
+      </button>
+
+      <div class="viewer-image-wrap">
+        <img class="viewer-image" id="viewer-image" src="" alt="">
+      </div>
+
+      <div class="viewer-info">
+        <div class="viewer-number" id="viewer-number">Artwork 01</div>
+
+        <h2 class="viewer-title" id="viewer-title">
+          Artwork title
+        </h2>
+
+        <div class="viewer-divider"></div>
+
+        <p class="viewer-description" id="viewer-description">
+          Artwork description.
+        </p>
+
+        <div class="viewer-category" id="viewer-category">
+          Illustration
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>A small archive of <span>beautiful creations.</span></p>
+    <p>HBDAYAG · Made with care</p>
+  </footer>
+
+  <script>
+    // STARFIELD
+    const starContainer = document.getElementById("stars");
+
+    for (let i = 0; i < 100; i++) {
+      const star = document.createElement("span");
+      star.className = "star";
+
+      star.style.left = Math.random() * 100 + "%";
+      star.style.top = Math.random() * 100 + "%";
+      star.style.animationDelay = Math.random() * 5 + "s";
+      star.style.animationDuration = (2 + Math.random() * 4) + "s";
+
+      starContainer.appendChild(star);
+    }
+
+    // GALLERY VIEWER
+    const cards = document.querySelectorAll(".art-card");
+    const viewer = document.getElementById("viewer");
+
+    const viewerImage = document.getElementById("viewer-image");
+    const viewerTitle = document.getElementById("viewer-title");
+    const viewerDescription = document.getElementById("viewer-description");
+    const viewerCategory = document.getElementById("viewer-category");
+    const viewerNumber = document.getElementById("viewer-number");
+
+    const closeButton = document.getElementById("close-viewer");
+
+    let previousFocus = null;
+
+    // Update the number of artworks automatically
+    document.getElementById("art-count").textContent =
+      String(cards.length).padStart(2, "0") + " pieces";
+
+    // Open artwork
+    cards.forEach((card, index) => {
+      card.addEventListener("click", () => {
+        previousFocus = card;
+
+        const image = card.dataset.image;
+        const title = card.dataset.title;
+        const category = card.dataset.category;
+        const description = card.dataset.description;
+
+        viewerImage.src = image;
+        viewerImage.alt = title;
+
+        viewerTitle.textContent = title;
+        viewerDescription.textContent = description;
+        viewerCategory.textContent = category;
+
+        viewerNumber.textContent =
+          "Artwork " + String(index + 1).padStart(2, "0");
+
+        viewer.classList.add("active");
+        viewer.setAttribute("aria-hidden", "false");
+        document.body.classList.add("modal-open");
+
+        closeButton.focus();
+      });
+    });
+
+    // Close artwork
+    function closeViewer() {
+      viewer.classList.remove("active");
+      viewer.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+
+      setTimeout(() => {
+        viewerImage.src = "";
+      }, 350);
+
+      if (previousFocus) previousFocus.focus();
+    }
+
+    closeButton.addEventListener("click", closeViewer);
+
+    // Close when clicking outside the panel
+    viewer.addEventListener("click", (event) => {
+      if (event.target === viewer) {
+        closeViewer();
+      }
+    });
+
+    // Close with Escape
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape" && viewer.classList.contains("active")) {
+        closeViewer();
+      }
+    });
+  </script>
+
+</body>
+</html>
